@@ -29,7 +29,7 @@ public class Table
 
     private List<Player> players = new(7);
     private Deck deck;
-    public List<Card> cards = new(5);
+    private List<Card> cards = new(5);
     public int buyIn;
     private int smallBlind;
     private int dealerIndex;

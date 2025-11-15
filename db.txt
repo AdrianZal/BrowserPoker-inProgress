@@ -1,0 +1,241 @@
+-- Created by Vertabelo (http://vertabelo.com)
+-- Last modification date: 2025-09-20 17:36:17.882
+
+-- tables
+-- Table: Card
+CREATE TABLE Card (
+    card varchar(3)  NOT NULL,
+    CONSTRAINT Card_pk PRIMARY KEY  (card)
+);
+
+-- Table: CardFrontSkin
+CREATE TABLE CardFrontSkin (
+    id int IDENTITY(1,1) NOT NULL,
+    name varchar(50)  NOT NULL,
+    filename varchar(54)  NOT NULL,
+    card varchar(3)  NOT NULL,
+    CONSTRAINT CardFrontSkin_pk PRIMARY KEY  (id)
+);
+
+-- Table: CardReverseSkin
+CREATE TABLE CardReverseSkin (
+    id int IDENTITY(1,1) NOT NULL,
+    name varchar(50)  NOT NULL,
+    filename varchar(54)  NOT NULL,
+    CONSTRAINT CardReverseSkin_pk PRIMARY KEY  (id)
+);
+
+-- Table: Player
+CREATE TABLE Player (
+    id int IDENTITY(1,1) NOT NULL,
+    name varchar(30)  NOT NULL,
+    email varchar(255) NOT NULL,
+    password varchar(450) NOT NULL,
+    balance int  NOT NULL,
+    CONSTRAINT Player_pk PRIMARY KEY  (id),
+    CONSTRAINT UQ_Player_Name UNIQUE (name),
+    CONSTRAINT UQ_Player_Email UNIQUE (email)
+);
+
+-- Table: PlayerEquippedFaceSkin
+CREATE TABLE PlayerEquippedFaceSkin (
+    Player_id int  NOT NULL,
+    card varchar(3)  NOT NULL,
+    Skin_id int  NOT NULL,
+    CONSTRAINT PlayerEquippedFaceSkin_pk PRIMARY KEY  (Player_id,card)
+);
+
+-- Table: PlayerEquippedReverseSkin
+CREATE TABLE PlayerEquippedReverseSkin (
+    Player_id int  NOT NULL,
+    Skin_id int  NOT NULL,
+    CONSTRAINT PlayerEquippedReverseSkin_pk PRIMARY KEY  (Player_id)
+);
+
+-- Table: PlayerOwnedFaceSkin
+CREATE TABLE PlayerOwnedFaceSkin (
+    Player_id int  NOT NULL,
+    Skin_id int  NOT NULL,
+    CONSTRAINT PlayerOwnedFaceSkin_pk PRIMARY KEY  (Player_id,Skin_id)
+);
+
+-- Table: PlayerOwnedReverseSkin
+CREATE TABLE PlayerOwnedReverseSkin (
+    Player_id int  NOT NULL,
+    Skin_id int  NOT NULL,
+    CONSTRAINT PlayerOwnedReverseSkin_pk PRIMARY KEY  (Player_id,Skin_id)
+);
+
+-- Table: PlayerTable
+CREATE TABLE PlayerTable (
+    Player_id int  NOT NULL,
+    Table_joinCode varchar(6)  NOT NULL,
+    table_balance int  NOT NULL,
+    CONSTRAINT PlayerTable_pk PRIMARY KEY  (Player_id)
+);
+
+-- Table: Table
+CREATE TABLE "Table" (
+    join_code varchar(6)  NOT NULL,
+    buy_in int  NOT NULL,
+    CONSTRAINT Table_pk PRIMARY KEY  (join_code)
+);
+
+-- Table: RefreshToken
+CREATE TABLE RefreshToken (
+    id int  NOT NULL,
+    Player_id int  NOT NULL,
+    token_hash varchar(256)  NOT NULL,
+    expires_at datetime  NOT NULL,
+    revoked bit  NOT NULL,
+    CONSTRAINT RefreshToken_pk PRIMARY KEY  (id)
+);
+
+-- foreign keys
+-- Reference: CardFrontSkin_Card (table: CardFrontSkin)
+ALTER TABLE CardFrontSkin ADD CONSTRAINT CardFrontSkin_Card
+    FOREIGN KEY (card)
+    REFERENCES Card (card);
+
+-- Reference: PlayerEquippedFaceSkin_Card (table: PlayerEquippedFaceSkin)
+ALTER TABLE PlayerEquippedFaceSkin ADD CONSTRAINT PlayerEquippedFaceSkin_Card
+    FOREIGN KEY (card)
+    REFERENCES Card (card);
+
+-- Reference: PlayerEquippedFaceSkin_PlayerOwnedFaceSkin (table: PlayerEquippedFaceSkin)
+ALTER TABLE PlayerEquippedFaceSkin ADD CONSTRAINT PlayerEquippedFaceSkin_PlayerOwnedFaceSkin
+    FOREIGN KEY (Player_id,Skin_id)
+    REFERENCES PlayerOwnedFaceSkin (Player_id,Skin_id);
+
+-- Reference: PlayerEquippedReverseSkin_PlayerOwnedReverseSkin (table: PlayerEquippedReverseSkin)
+ALTER TABLE PlayerEquippedReverseSkin ADD CONSTRAINT PlayerEquippedReverseSkin_PlayerOwnedReverseSkin
+    FOREIGN KEY (Player_id,Skin_id)
+    REFERENCES PlayerOwnedReverseSkin (Player_id,Skin_id);
+
+-- Reference: PlayerOwnedFaceSkin_CardFrontSkin (table: PlayerOwnedFaceSkin)
+ALTER TABLE PlayerOwnedFaceSkin ADD CONSTRAINT PlayerOwnedFaceSkin_CardFrontSkin
+    FOREIGN KEY (Skin_id)
+    REFERENCES CardFrontSkin (id);
+
+-- Reference: PlayerOwnedFaceSkin_Player (table: PlayerOwnedFaceSkin)
+ALTER TABLE PlayerOwnedFaceSkin ADD CONSTRAINT PlayerOwnedFaceSkin_Player
+    FOREIGN KEY (Player_id)
+    REFERENCES Player (id);
+
+-- Reference: PlayerOwnedReverseSkin_CardReverseSkin (table: PlayerOwnedReverseSkin)
+ALTER TABLE PlayerOwnedReverseSkin ADD CONSTRAINT PlayerOwnedReverseSkin_CardReverseSkin
+    FOREIGN KEY (Skin_id)
+    REFERENCES CardReverseSkin (id);
+
+-- Reference: PlayerOwnedReverseSkin_Player (table: PlayerOwnedReverseSkin)
+ALTER TABLE PlayerOwnedReverseSkin ADD CONSTRAINT PlayerOwnedReverseSkin_Player
+    FOREIGN KEY (Player_id)
+    REFERENCES Player (id);
+
+-- Reference: TablePlayer_Player (table: PlayerTable)
+ALTER TABLE PlayerTable ADD CONSTRAINT TablePlayer_Player
+    FOREIGN KEY (Player_id)
+    REFERENCES Player (id);
+
+-- Reference: TablesPlayers_Tables (table: PlayerTable)
+ALTER TABLE PlayerTable ADD CONSTRAINT TablesPlayers_Tables
+    FOREIGN KEY (Table_joinCode)
+    REFERENCES "Table" (join_code);
+
+-- Reference: RefreshToken_Player (table: RefreshToken_)
+ALTER TABLE RefreshToken ADD CONSTRAINT RefreshToken_Player
+    FOREIGN KEY (Player_id)
+    REFERENCES Player (id);
+
+
+-- End of file.
+
+INSERT INTO CardReverseSkin (name, filename) 
+VALUES ('default', 'default.png');
+
+INSERT INTO dbo.Card (Card)
+SELECT CAST(Rank AS VARCHAR(2)) + Suit
+FROM (VALUES
+    ('s'), ('c'), ('d'), ('h')
+) AS Suits(Suit)
+CROSS JOIN (
+    SELECT number AS Rank
+    FROM master.dbo.spt_values
+    WHERE type = 'P' AND number BETWEEN 2 AND 14
+) AS Ranks;
+
+
+INSERT INTO CardFrontSkin (name, filename, card)
+SELECT 'default_' + CAST(Ranks.Rank AS VARCHAR(2)) + Suits.Suit AS name,
+        'default\' + CAST(Ranks.Rank AS VARCHAR(2)) + Suits.Suit + '.png' AS filename,
+        CAST(Ranks.Rank AS VARCHAR(2)) + Suits.Suit AS card
+FROM (VALUES
+    ('s'), ('c'), ('d'), ('h')
+) AS Suits(Suit)
+CROSS JOIN (
+    SELECT number AS Rank
+    FROM master.dbo.spt_values
+    WHERE type = 'P' AND number BETWEEN 2 AND 14
+) AS Ranks;
+
+CREATE TRIGGER tr_Player_Insert_AddDefaultSkins
+ON Player
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE p
+    SET balance = 1000
+    FROM Player AS p
+    JOIN inserted AS i
+    ON p.id = i.id;
+
+	INSERT INTO PlayerOwnedReverseSkin (Player_id, Skin_id)
+    SELECT
+        i.id AS Player_id,
+        crs.id AS Skin_id
+    FROM inserted AS i
+    CROSS JOIN CardReverseSkin AS crs
+    WHERE crs.name LIKE 'default%';
+
+    INSERT INTO PlayerEquippedReverseSkin (Player_id, Skin_id)
+    SELECT
+        i.id AS Player_id,
+        crs.id AS Skin_id
+    FROM inserted AS i
+    CROSS JOIN CardReverseSkin AS crs
+    WHERE crs.name LIKE 'default%';
+
+    INSERT INTO PlayerOwnedFaceSkin (Player_id, Skin_id)
+    SELECT 
+        i.id AS Player_id,
+        cfs.id AS Skin_id
+    FROM inserted AS i
+    CROSS JOIN CardFrontSkin AS cfs
+    WHERE cfs.name LIKE 'default%';
+
+    INSERT INTO PlayerEquippedFaceSkin (Player_id, card, Skin_id)
+    SELECT 
+        i.id AS Player_id,
+        cfs.card AS card,
+        cfs.id AS Skin_id
+    FROM inserted AS i
+    CROSS JOIN CardFrontSkin AS cfs
+    WHERE cfs.name LIKE 'default%';
+
+END;
+GO
+
+INSERT INTO Player (name, email, balance, salt, password) 
+VALUES ('TestUser', 'testuser@example.com', 0, 'test_salt_12345', 'test_password_hash');
+
+
+SELECT * FROM Player WHERE name = 'TestUser';
+select * from CardFrontSkin
+SELECT * FROM PlayerOwnedFaceSkin;
+SELECT * FROM PlayerEquippedFaceSkin;
+
+select * from CardReverseSkin
+SELECT * FROM PlayerOwnedReverseSkin;
+SELECT * FROM PlayerEquippedReverseSkin;

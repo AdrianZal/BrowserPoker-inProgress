@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerServer", "PokerServer\PokerServer.csproj", "{1BD7E1EA-5AB6-46C3-8591-87BC3893FEE5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1BD7E1EA-5AB6-46C3-8591-87BC3893FEE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BD7E1EA-5AB6-46C3-8591-87BC3893FEE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BD7E1EA-5AB6-46C3-8591-87BC3893FEE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BD7E1EA-5AB6-46C3-8591-87BC3893FEE5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A414C09E-31C5-4335-9926-338C1D3A39C0}
+	EndGlobalSection
+EndGlobal

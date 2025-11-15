@@ -24,9 +24,14 @@
             }
         }
         
-        <img class=@classFoldButton src=@buttonFold alt="fold" @onmouseover="() => Over(ButtonType.Fold)" @onmouseout="() => Out(ButtonType.Fold)" @onmousedown="() => Click(ButtonType.Fold)" @onmouseup="() => Over(ButtonType.Fold)">
-        <img class=@classCheckCallButton src=@buttonCheckCall alt="check/call" @onmouseover="() => Over(ButtonType.CheckCall)" @onmouseout="() => Out(ButtonType.CheckCall)" @onmousedown="() => Click(ButtonType.CheckCall)" @onmouseup="() => Over(ButtonType.CheckCall)">
-        <img class=@classRaiseButton src=@buttonRaise alt="raise" @onmouseover="() => Over(ButtonType.Raise)" @onmouseout="() => Out(ButtonType.Raise)" @onmousedown="() => Click(ButtonType.Raise)" @onmouseup="() => Over(ButtonType.Raise)">
+        <img class=@classFoldButton src=@buttonFold alt="fold" @onmouseover="() => Over(ButtonType.Fold)" 
+             @onmouseout="() => Out(ButtonType.Fold)" @onmousedown="() => Click(ButtonType.Fold)" @onmouseup="() => Over(ButtonType.Fold)">
+        
+        <img class=@classCheckCallButton src=@buttonCheckCall alt="check/call" @onmouseover="() => Over(ButtonType.CheckCall)" 
+             @onmouseout="() => Out(ButtonType.CheckCall)" @onmousedown="() => Click(ButtonType.CheckCall)" @onmouseup="() => Over(ButtonType.CheckCall)">
+        
+        <img class=@classRaiseButton src=@buttonRaise alt="raise" @onmouseover="() => Over(ButtonType.Raise)" 
+             @onmouseout="() => Out(ButtonType.Raise)" @onmousedown="() => Click(ButtonType.Raise)" @onmouseup="() => Over(ButtonType.Raise)">
         
     </div>
 
@@ -48,6 +53,8 @@
     }
 
     private CheckOrCall checkOrCall = CheckOrCall.Check;
+
+    private Dictionary<int, string> PlayerCards; 
     
     
     private string tableCard1 = "images/cardFaces/default/10d.png";
@@ -76,8 +83,8 @@
         "images/cardReverses/skull.png",
         "images/cardReverses/skull.png",
         
-        "images/cardReverses/dottedRed.png",
-        "images/cardReverses/dottedRed.png",
+        "images/cardReverses/default.png",
+        "images/cardReverses/default.png",
         
         "images/cardReverses/szpont.png",
         "images/cardReverses/szpont.png",
@@ -123,6 +130,8 @@
             case ButtonType.Raise:
                 buttonRaise = buttonRaiseOn;
                 break;
+            default:
+                break;;
         }
     }
 
@@ -139,6 +148,8 @@
             case ButtonType.Raise:
                 buttonRaise = buttonRaiseOff;
                 break;
+            default:
+                break;;
         }
     }
     
@@ -155,6 +166,8 @@
             case ButtonType.Raise:
                 buttonRaise = buttonRaiseClick;
                 break;
+            default:
+                break;;
         }
     }
 }
