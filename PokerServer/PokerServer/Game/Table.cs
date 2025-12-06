@@ -54,26 +54,27 @@ public class Table
     {
         if (players.Count < 2)
             return;
+
         Deal();
-        ShowTableCards();
-        var stillOn =BettingRound(true);
+        GetTableCards();
+        var stillOn = BettingRound(true);
         
         Flop();
-        ShowTableCards();
+        GetTableCards();
         if (stillOn)
         {
             stillOn = BettingRound(false);
         }
         
         DrawTableCard();
-        ShowTableCards();
+        GetTableCards();
         if (stillOn)
         {
             stillOn = BettingRound(false);
         }
         
         DrawTableCard();
-        ShowTableCards();
+        GetTableCards();
         if (stillOn)
         {
             BettingRound(false);
@@ -105,15 +106,14 @@ public class Table
             if (playerStatuses[player] == PlayerStatuses.Checked) 
                 break;
             
-            Console.WriteLine(player.name + "(" + playerRoles[player] + ")" + ": ");
-            var decision = Console.ReadLine();
+            var decision = GetDecision(player);
 
             switch (decision)
             {
-                case "fold":
+                case Decision.Fold:
                     playerStatuses[player] = PlayerStatuses.Folded;
                     break;
-                case "call":
+                case Decision.Call:
                     var callAmount = toCall - roundBets[player];
                     if (player.tableBalance <=  callAmount)
                     {
@@ -126,16 +126,14 @@ public class Table
                         playerStatuses[player] = PlayerStatuses.Checked;
                     }
                     break;
-                case "raise":
-                    Console.WriteLine("Amount: ");
-                    var input = Convert.ToInt32(Console.ReadLine());
+                case Decision.Raise:
+                    var amount = GetRaiseAmount(player);
 
-                    if (input > player.tableBalance)
+                    if (amount > player.tableBalance)
                     {
+                        playerStatuses[player] = PlayerStatuses.Folded;
                         break;
                     }
-
-                    var amount = input;
 
                     if (amount < minRaise && amount == player.tableBalance)
                     {
@@ -166,6 +164,16 @@ public class Table
             i = (i + 1) % players.Count;
         }
         return true;
+    }
+
+    private Decision GetDecision(Player player)
+    {
+        return Decision.Call;
+    }
+
+    private int GetRaiseAmount(Player player)
+    {
+        return 0;
     }
 
     private void HandleBet(Player player, int amount)
@@ -305,22 +313,9 @@ public class Table
         }
     }
 
-    private void ShowTableCards()
+    private List<Card> GetTableCards()
     {
-        Console.Clear();
-        Console.WriteLine("Pot: " + handBets.Values.Sum() + "$");
-        foreach (var player in players)
-        {
-            Console.WriteLine("Balance: " + player.tableBalance);
-            player.SeeCards();
-            var score = CheckScore(player);
-            Console.WriteLine(WhatHand(score) + "\n" + score + "\n");
-        }
-
-        foreach (var card in cards)
-        {
-            Console.WriteLine(card.Value + " " + card.Suit);
-        }
+        return cards;
     }
 
 
