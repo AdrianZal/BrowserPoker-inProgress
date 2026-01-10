@@ -1,0 +1,114 @@
+﻿@page "/register"
+@rendermode InteractiveServer
+@using Shared.Models.DTOs
+@using System.Text.Json
+@using Shared.Models.Utility
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<PageTitle>Register</PageTitle>
+
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card shadow-sm" style="width: 100%; max-width: 450px;">
+        <div class="card-header">
+            <h4 class="mb-0">Create Account</h4>
+        </div>
+        <div class="card-body p-4">
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger mb-3">
+                    @errorMessage
+                </div>
+            }
+
+            <EditForm Model="@registrationModel" OnValidSubmit="HandleRegistration" FormName="registerForm" novalidate>
+                <DataAnnotationsValidator />
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <InputText id="name" class="form-control" @bind-Value="registrationModel.Name" />
+                    <ValidationMessage For="@(() => registrationModel.Name)" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <InputText id="email" type="email" class="form-control" @bind-Value="registrationModel.Email" />
+                    <ValidationMessage For="@(() => registrationModel.Email)" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <InputText id="password" type="password" class="form-control" @bind-Value="registrationModel.Password" />
+                    <ValidationMessage For="@(() => registrationModel.Password)" class="text-danger" />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2" disabled="@isSubmitting">
+                    @if (isSubmitting)
+                    {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span> Registering...</span>
+                    }
+                    else
+                    {
+                        <span>Register</span>
+                    }
+                </button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterRequestDto registrationModel = new();
+    private bool isSubmitting = false;
+    private string? errorMessage;
+
+    private async Task HandleRegistration()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/register", registrationModel);
+
+            Console.WriteLine($"Registration attempt for: {registrationModel.Email}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<RegisterResponseDto>();
+                Console.WriteLine($"Registration success for: {registrationModel.Email}");
+                Navigation.NavigateTo("/login");
+            }
+            else
+            {
+                var problemDetails = await response.Content.ReadFromJsonAsync<RegisterResponse>();
+
+                if (problemDetails?.ErrorTypes != null)
+                {
+                    var messages = problemDetails.ErrorTypes.Select(e => e switch
+                    {
+                        RegistrationErrorType.NameInUse => "Name alresdy in use.",
+                        RegistrationErrorType.EmailInUse => "Email already in use.",
+                        _ => "Unexpected error."
+                    });
+
+                    errorMessage = string.Join(" ", messages);
+                }
+            }
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Connection error.";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Unexpected error.";
+            Console.WriteLine(ex.ToString());
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+}
