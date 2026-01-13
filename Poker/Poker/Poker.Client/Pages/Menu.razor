@@ -1,0 +1,32 @@
+﻿@page "/menu"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div class="p-4 shadow-sm border rounded bg-light text-center" style="width: 100%; max-width: 350px;">
+
+        <div class="d-grid gap-5">
+            <button class="btn btn-primary fs-5 py-2" @onclick="HandleCreateTable">
+                CREATE TABLE
+            </button>
+
+            <button class="btn btn-secondary fs-5 py-2" @onclick="HandleJoinTable">
+                JOIN TABLE
+            </button>
+
+            <form method="post" action="api/auth/logout">
+                <AntiforgeryToken />
+                <button type="submit" class="btn btn-outline-danger w-100 fs-5 py-2">
+                    LOGOUT
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@code {
+    private async Task HandleCreateTable() { }
+    private void HandleJoinTable() { }
+}

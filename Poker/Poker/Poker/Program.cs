@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -30,21 +31,49 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<PokerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.Cookie.Name = "accessToken";
+    options.LoginPath = "/";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Events.OnRedirectToLogin = context =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        if (context.Request.Path.StartsWithSegments("/api"))
         {
-            ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["AppSettings:Audience"],
-            ValidateLifetime = true,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)),
-            ValidateIssuerSigningKey = true
-        };
-    });
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        }
+        else
+        {
+            context.Response.Redirect(context.RedirectUri);
+        }
+        return Task.CompletedTask;
+    };
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["AppSettings:Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["AppSettings:Audience"],
+        ValidateLifetime = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)),
+        ValidateIssuerSigningKey = true
+    };
+});
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -75,11 +104,11 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseAntiforgery();
 
 app.MapControllers();
-
-app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()

@@ -2,15 +2,18 @@
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Azure;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
-using Shared.Models.DTOs;
 using Poker.Models;
 using Poker.Services;
+using Shared.Models.DTOs;
 using Shared.Models.DTOs;
 using Shared.Models.Utility;
 
@@ -41,8 +44,9 @@ namespace Poker.Controllers
                 return Redirect($"/login?error=invalid_credentials&name={Uri.EscapeDataString(request.Name)}");
             }
 
-            SetTokenCookies(response.AccessToken, response.RefreshToken);
-            return LocalRedirect("/");
+            await SetTokenCookie(response);
+
+            return LocalRedirect("/menu");
         }
 
         [HttpPost("register")]
@@ -74,8 +78,6 @@ namespace Poker.Controllers
                 return Unauthorized("Invalid refresh token");
             }
 
-            SetTokenCookies(response.AccessToken, response.RefreshToken);
-
             return Ok();
         }
 
@@ -84,27 +86,39 @@ namespace Poker.Controllers
         public async Task<IActionResult> Logout()
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(userIdClaim, out int id))
+            if (int.TryParse(userIdClaim, out int id))
             {
-                return BadRequest("Invalid token");
+                await authService.LogoutAsync(id);
             }
 
-            await authService.LogoutAsync(id);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return NoContent();
+            Response.Cookies.Delete("refreshToken");
+
+            return LocalRedirect("/");
         }
 
-        private void SetTokenCookies(string accessToken, string refreshToken)
+        private async Task SetTokenCookie(TokenResponseDto response)
         {
-            var accessOptions = new CookieOptions
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(response.AccessToken);
+
+            var claimsIdentity = new ClaimsIdentity(
+                jwtToken.Claims,
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
             {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddHours(1)
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(1)
             };
 
-            var refreshOptions = new CookieOptions
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
+            var options = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
@@ -112,8 +126,7 @@ namespace Poker.Controllers
                 Expires = DateTime.UtcNow.AddDays(7)
             };
 
-            Response.Cookies.Append("accessToken", accessToken, accessOptions);
-            Response.Cookies.Append("refreshToken", refreshToken, refreshOptions);
+            Response.Cookies.Append("refreshToken", response.RefreshToken, options);
         }
     }
 }
