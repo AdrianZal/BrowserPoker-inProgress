@@ -1,0 +1,49 @@
+﻿@page "/login"
+@inject NavigationManager Navigation
+
+<PageTitle>Login</PageTitle>
+
+<div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card shadow-sm" style="width: 100%; max-width: 450px;">
+        <div class="card-header"><h4>Login</h4></div>
+        <div class="card-body p-4">
+            <form method="post" action="api/auth/login" novalidate>
+                <AntiforgeryToken />
+
+                @if (Error == "invalid_credentials")
+                {
+                    <div class="alert alert-danger mb-3">
+                        Invalid name or password.
+                    </div>
+                }
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input id="name" name="Name" value="@SavedName"
+                           class="form-control @(Error == "name_required" ? "is-invalid" : "")" />
+                    @if (Error == "name_required")
+                    {
+                        <div class="invalid-feedback">The Name field is required.</div>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" name="Password" type="password"
+                           class="form-control @(Error == "password_required" || Error == "invalid_credentials" ? "is-invalid" : "")" />
+                    @if (Error == "password_required")
+                    {
+                        <div class="invalid-feedback">The Password field is required.</div>
+                    }
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery] public string? Error { get; set; }
+    [SupplyParameterFromQuery(Name = "name")] public string? SavedName { get; set; }
+}
