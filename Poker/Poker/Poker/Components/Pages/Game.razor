@@ -3,9 +3,11 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @using Microsoft.AspNetCore.Http
 @using Poker.Models.DTOs
+@using System.Net
 @attribute [Authorize]
 @implements IAsyncDisposable
 @inject NavigationManager Navigation
+@inject IHttpContextAccessor HttpContextAccessor
 
 <PageTitle>Game</PageTitle>
 
@@ -16,8 +18,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var cookieContainer = new CookieContainer();
+        var hubUrl = Navigation.ToAbsoluteUri("/pokerhub");
+
+        if (HttpContextAccessor.HttpContext?.Request.Cookies.TryGetValue("accessToken", out var token) == true)
+        {
+            cookieContainer.Add(new Cookie("accessToken", token, "/", hubUrl.Host));
+        }
+
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/pokerhub"))
+            .WithUrl(hubUrl, options =>
+            {
+                options.Cookies = cookieContainer;
+            })
             .WithAutomaticReconnect()
             .Build();
 
