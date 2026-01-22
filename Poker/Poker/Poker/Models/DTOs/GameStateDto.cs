@@ -1,4 +1,4 @@
-﻿namespace Shared.Models.DTOs
+﻿namespace Poker.Models.DTOs
 {
     public class GameStateDto
     {

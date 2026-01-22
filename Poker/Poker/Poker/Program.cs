@@ -1,22 +1,21 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Poker.Client.Pages;
 using Poker.Components;
 using Poker.Models;
 using Poker.Services;
+using PokerServer.Hubs;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveServerComponents();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
 
@@ -41,23 +40,19 @@ builder.Services.AddAuthentication(options =>
     options.Cookie.Name = "accessToken";
     options.LoginPath = "/";
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Events.OnRedirectToLogin = context =>
-    {
-        if (context.Request.Path.StartsWithSegments("/api"))
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-        }
-        else
-        {
-            context.Response.Redirect(context.RedirectUri);
-        }
-        return Task.CompletedTask;
-    };
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Lax;
 })
 .AddJwtBearer(options =>
 {
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            context.Token = context.Request.Cookies["accessToken"];
+            return Task.CompletedTask;
+        }
+    };
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -72,26 +67,23 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddScoped(sp =>
+builder.Services.AddScoped(sp => new HttpClient
 {
-    var navManager = sp.GetRequiredService<NavigationManager>();
-    return new HttpClient
-    {
-        BaseAddress = new Uri(navManager.BaseUri)
-    };
+    BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? "https://localhost:7274")
 });
+
+builder.Services.AddSingleton<GameService>();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseWebAssemblyDebugging();
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
@@ -104,6 +96,8 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
@@ -112,8 +106,13 @@ app.MapControllers();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Poker.Client._Imports).Assembly);
+    .AddInteractiveServerRenderMode();
+
+app.UseCors(policy =>
+    policy.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader());
+
+app.MapHub<PokerHub>("/pokerhub");
 
 app.Run();

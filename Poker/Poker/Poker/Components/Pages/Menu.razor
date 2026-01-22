@@ -1,14 +1,18 @@
 ﻿@page "/menu"
 @using Microsoft.AspNetCore.Authorization
+@using Poker.Services
 @attribute [Authorize]
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject GameService GameService
+
+<PageTitle>Menu</PageTitle>
 
 <div class="d-flex align-items-center justify-content-center min-vh-100">
     <div class="p-4 shadow-sm border rounded bg-light text-center" style="width: 100%; max-width: 350px;">
 
         <div class="d-grid gap-5">
-            <button class="btn btn-primary fs-5 py-2" @onclick="HandleCreateTable">
+            <button class="btn btn-primary fs-5 py-2" @onclick="() => HandleCreateTable(1000)">
                 CREATE TABLE
             </button>
 
@@ -26,7 +30,17 @@
     </div>
 </div>
 
+
 @code {
-    private async Task HandleCreateTable() { }
-    private void HandleJoinTable() { }
+    private void HandleCreateTable(int buyIn)
+    {
+        string code = GameService.CreateTable(buyIn);
+
+        Navigation.NavigateTo($"/game/{code}");
+    }
+
+    private void HandleJoinTable()
+    {
+        Navigation.NavigateTo("/join");
+    }
 }

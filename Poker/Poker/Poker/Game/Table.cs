@@ -1,6 +1,6 @@
-﻿using Shared.Models.DTOs;
+﻿using Poker.Models.DTOs;
 
-namespace Shared.Game;
+namespace Poker.Game;
 
 public class Table
 {
@@ -48,6 +48,7 @@ public class Table
     private Deck deck;
     private List<Card> cards = new(5);
     public int buyIn;
+    public string joinCode;
     private int smallBlind;
     private int dealerIndex;
     private int smallBlindIndex;
@@ -60,12 +61,14 @@ public class Table
     Dictionary<Player, PlayerStatuses> playerStatuses = new();
     Dictionary<Player, int> handWinners = new();
 
-    public Table(int buyIn)
+    public Table(int buyIn, string joinCode)
     {
         deck = new Deck();
         this.buyIn = buyIn;
-        smallBlind = int.Max(buyIn/100/2, 1);
+        this.joinCode = joinCode;
+        smallBlind = int.Max(buyIn / 100 / 2, 1);
         minRaise = smallBlind * 2;
+        this.joinCode = joinCode;
     }
 
     public void PlayHand()
@@ -236,11 +239,11 @@ public class Table
         // Create a DTO (Data Transfer Object) to send to frontend
         var dto = new GameStateDto
         {
-            Stage = this.CurrentStage,
-            TableCards = this.cards,
-            Pot = this.handBets.Values.Sum(),
-            CurrentPlayer = this.CurrentPlayer,
-            HandWinners = this.handWinners,
+            Stage = CurrentStage,
+            TableCards = cards,
+            Pot = handBets.Values.Sum(),
+            CurrentPlayer = CurrentPlayer,
+            HandWinners = handWinners,
         };
         OnGameStateChanged?.Invoke(dto);
     }
@@ -457,7 +460,7 @@ public class Table
 
     private int CheckScore(Player player)
     {
-        var hand = this.cards.Concat(player.cards).ToList();
+        var hand = cards.Concat(player.cards).ToList();
 
         var x = IsRoyalFlush(hand);
         if (x != 0)

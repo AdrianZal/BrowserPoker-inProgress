@@ -1,4 +1,4 @@
-﻿namespace Shared.Game;
+﻿namespace Poker.Game;
 
 public class Card
 {

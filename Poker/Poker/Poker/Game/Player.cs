@@ -1,4 +1,4 @@
-﻿namespace Shared.Game;
+﻿namespace Poker.Game;
 
 public class Player
 {
@@ -9,8 +9,8 @@ public class Player
     public Player(string name, int buyIn)
     {
         this.name = name;
-        this.cards = new List<Card>(2);
-        this.tableBalance = buyIn;
+        cards = new List<Card>(2);
+        tableBalance = buyIn;
     }
 
     public void SeeCards()

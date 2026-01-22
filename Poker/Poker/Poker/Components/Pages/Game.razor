@@ -1,0 +1,53 @@
+﻿@page "/game/{JoinCode}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Http
+@using Poker.Models.DTOs
+@attribute [Authorize]
+@implements IAsyncDisposable
+@inject NavigationManager Navigation
+
+<PageTitle>Game</PageTitle>
+
+@code {
+    [Parameter] public string JoinCode { get; set; } = string.Empty;
+    private HubConnection? hubConnection;
+    private GameStateDto? gameState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/pokerhub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<GameStateDto>("UpdateState", (state) =>
+        {
+            gameState = state;
+            InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.On<string>("PlayerJoined", (playerName) =>
+        {
+            Console.WriteLine($"Player {playerName} joined the table.");
+        });
+
+        try
+        {
+            await hubConnection.StartAsync();
+            await hubConnection.InvokeAsync("JoinTable", JoinCode);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"SignalR Connection Error: {ex.Message}");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

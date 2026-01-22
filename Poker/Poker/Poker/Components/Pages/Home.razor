@@ -1,18 +1,51 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Home</PageTitle>
 
-<div class="d-flex align-items-center justify-content-center min-vh-100">
-    <div class="card shadow-sm p-5 text-center" style="width: fit-content;">
-        <h1 class="mb-4 text-nowrap">Welcome to Pixel Poker</h1>
-
-        <div class="d-flex justify-content-center gap-3">
-            <a href="register" class="btn btn-primary btn-lg px-4">
-                Register
-            </a>
-            <a href="login" class="btn btn-outline-secondary btn-lg px-4">
-                Login
-            </a>
+@if (isCheckingAuth)
+{
+    <div class="d-flex justify-content-center align-items-center min-vh-100">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
-</div>
+}
+else
+{
+    <div class="d-flex align-items-center justify-content-center min-vh-100">
+        <div class="card shadow-sm p-5 text-center" style="width: fit-content;">
+            <h1 class="mb-4 text-nowrap">Welcome to Pixel Poker</h1>
+
+            <div class="d-flex justify-content-center gap-3">
+                <a href="register" class="btn btn-primary btn-lg px-4">
+                    Register
+                </a>
+                <a href="login" class="btn btn-outline-secondary btn-lg px-4">
+                    Login
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool isCheckingAuth = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is { IsAuthenticated: true })
+        {
+            Navigation.NavigateTo("/menu");
+        }
+        else
+        {
+            isCheckingAuth = false;
+        }
+    }
+}

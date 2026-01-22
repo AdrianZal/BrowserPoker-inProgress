@@ -1,9 +1,9 @@
 ﻿@page "/register"
 @rendermode InteractiveServer
 @using Shared.Models.DTOs
-@using System.Text.Json
 @using Shared.Models.Utility
-@inject HttpClient Http
+@using Poker.Services
+@inject IAuthService AuthService
 @inject NavigationManager Navigation
 
 <PageTitle>Register</PageTitle>
@@ -70,40 +70,30 @@
 
         try
         {
-            var response = await Http.PostAsJsonAsync("api/auth/register", registrationModel);
+            var result = await AuthService.RegisterAsync(registrationModel);
 
-            Console.WriteLine($"Registration attempt with name: {registrationModel.Name}, email: {registrationModel.Email}");
-
-            if (response.IsSuccessStatusCode)
+            if (result.IsSuccess)
             {
-                var result = await response.Content.ReadFromJsonAsync<RegisterResponseDto>();
-                Console.WriteLine($"Registration success with name: {result.Name}, email: {result.Email}; generated id: {result.Id}");
                 Navigation.NavigateTo("/login", forceLoad: true);
             }
             else
             {
-                var problemDetails = await response.Content.ReadFromJsonAsync<RegisterResponse>();
-
-                if (problemDetails?.ErrorTypes != null)
+                if (result.ErrorTypes != null)
                 {
-                    var messages = problemDetails.ErrorTypes.Select(e => e switch
+                    var messages = result.ErrorTypes.Select(e => e switch
                     {
                         RegistrationErrorType.NameInUse => "Name already in use.",
                         RegistrationErrorType.EmailInUse => "Email already in use.",
-                        _ => "Unexpected error."
+                        _ => "Registration failed."
                     });
 
                     errorMessage = string.Join(" ", messages);
                 }
             }
         }
-        catch (HttpRequestException)
-        {
-            errorMessage = "Connection error.";
-        }
         catch (Exception ex)
         {
-            errorMessage = "Unexpected error.";
+            errorMessage = "An unexpected server error occurred.";
             Console.WriteLine(ex.ToString());
         }
         finally
