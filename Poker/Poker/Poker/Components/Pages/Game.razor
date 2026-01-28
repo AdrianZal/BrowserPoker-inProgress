@@ -8,6 +8,7 @@
 @implements IAsyncDisposable
 @inject NavigationManager Navigation
 @inject IHttpContextAccessor HttpContextAccessor
+@inject GameService GameService
 
 <PageTitle>Game</PageTitle>
 
@@ -18,6 +19,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (GameService.GetTable(JoinCode)==null || GameService.GetTable(JoinCode).IsFull())
+        {
+            Navigation.NavigateTo($"/");
+        }
+
         var cookieContainer = new CookieContainer();
         var hubUrl = Navigation.ToAbsoluteUri("/pokerhub");
 
@@ -42,7 +48,7 @@
 
         hubConnection.On<string>("PlayerJoined", (playerName) =>
         {
-            Console.WriteLine($"Player {playerName} joined the table.");
+            Console.WriteLine($"Player {playerName} joined table.");
         });
 
         try

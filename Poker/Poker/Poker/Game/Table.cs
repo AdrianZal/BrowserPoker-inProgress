@@ -406,6 +406,11 @@ public class Table
         players.Remove(player);
     }
 
+    public bool IsFull()
+    {
+        return players.Count >= 7;
+    }
+
     private void Deal()
     {
         cards.Clear();

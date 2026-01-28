@@ -11,6 +11,12 @@ namespace PokerServer.Hubs
     {
         public async Task JoinTable(string joinCode)
         {
+            var table = gameService.GetTable(joinCode);
+
+            if (table == null) throw new HubException("Table not found.");
+
+            if (table.IsFull()) throw new HubException("Table is full.");
+
             var userIdClaim = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int playerId))
@@ -20,12 +26,11 @@ namespace PokerServer.Hubs
 
             var playerInfo = await context.Players.FindAsync(playerId);
 
-            var table = gameService.GetTable(joinCode);
-            if (table == null) throw new HubException("Table not found.");
-
             if(table.buyIn > playerInfo.Balance)
                 throw new HubException("Insufficient balance to join the table.");
+            
             var player = new Poker.Game.Player (playerInfo.Name, table.buyIn);
+            
             table.AddPlayer(player);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, joinCode);

@@ -16,10 +16,22 @@
                 CREATE TABLE
             </button>
 
-            <button class="btn btn-secondary fs-5 py-2" @onclick="HandleJoinTable">
-                JOIN TABLE
-            </button>
-
+            <div class="d-flex flex-column">
+                <div class="d-flex gap-2">
+                    <input type="text" class="form-control" placeholder="Table Code" value="@joinCode" @oninput="HandleJoinCodeInput" maxlength=6 inputmode="numeric" />
+                    <button class="btn btn-success fs-5 py-2" @onclick="HandleJoinTable" disabled="@(joinCode.Length != 6)">
+                        JOIN
+                    </button>
+                
+                </div>
+                @if (tableNotExist)
+                {
+                    <div class="text-danger mt-1 text-start">
+                        Invalid code.
+                    </div>
+                }
+            </div>
+            
             <form method="post" action="api/auth/logout">
                 <AntiforgeryToken />
                 <button type="submit" class="btn btn-outline-danger w-100 fs-5 py-2">
@@ -32,15 +44,41 @@
 
 
 @code {
+    private bool tableNotExist = false;
+    private bool tableIsFull = false;
+    private string joinCode = string.Empty;
+
     private void HandleCreateTable(int buyIn)
     {
         string code = GameService.CreateTable(buyIn);
-
         Navigation.NavigateTo($"/game/{code}");
     }
 
     private void HandleJoinTable()
     {
-        Navigation.NavigateTo("/join");
+        if (GameService.GetTable(joinCode) == null)
+        {
+            tableNotExist = true;
+        }
+        else if (!string.IsNullOrWhiteSpace(joinCode))
+        {
+            Navigation.NavigateTo($"/game/{joinCode}");
+        }
+    }
+
+    private void HandleJoinCodeInput(ChangeEventArgs e)
+    {
+        tableNotExist = false;
+
+        var input = e.Value?.ToString() ?? string.Empty;
+
+        var numericOnly = new string(input.Where(char.IsDigit).ToArray());
+
+        if (numericOnly.Length > 6)
+        {
+            numericOnly = numericOnly.Substring(0, 6);
+        }
+
+        joinCode = numericOnly;
     }
 }

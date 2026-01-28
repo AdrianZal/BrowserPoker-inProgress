@@ -8,7 +8,13 @@ public class GameService(IHubContext<PokerHub> hubContext)
 
     public string CreateTable(int buyIn)
     {
-        string code = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
+        string code;
+
+        do
+        {
+            code = Random.Shared.Next(0, 1000000).ToString("D6");
+        } while (_tables.ContainsKey(code));
+
         var table = new Table(buyIn ,code);
 
         table.OnGameStateChanged += async (state) =>
