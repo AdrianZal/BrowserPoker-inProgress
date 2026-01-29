@@ -7,5 +7,7 @@
         public int Pot { get; set; }
         public Game.Player? CurrentPlayer { get; set; }
         public Dictionary<Game.Player, int>? HandWinners { get; set; }
+        public Dictionary<Game.Player, Game.Table.PlayerRole> Roles { get; set; }
+        public Dictionary<Game.Player, Game.Table.PlayerStatuses> Statuses { get; set; }
     }
 }

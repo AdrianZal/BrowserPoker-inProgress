@@ -4,14 +4,14 @@ namespace Poker.Game;
 
 public class Table
 {
-    private enum PlayerRole
+    public enum PlayerRole
     {
         None,
         Dealer,
         SmallBlind,
         BigBlind
     }
-    private enum PlayerStatuses
+    public enum PlayerStatuses
     {
         Folded,
         ToCall,
@@ -44,7 +44,7 @@ public class Table
     public Player CurrentPlayer { get; private set; }
     private int _currentPlayerIndex;
 
-    private List<Player> players = new(7);
+    public List<Player> players = new(7);
     private Deck deck;
     private List<Card> cards = new(5);
     public int buyIn;
@@ -234,9 +234,8 @@ public class Table
     }
 
     // Helper to send data out
-    private void NotifyStateUpdate()
+    public void NotifyStateUpdate()
     {
-        // Create a DTO (Data Transfer Object) to send to frontend
         var dto = new GameStateDto
         {
             Stage = CurrentStage,
@@ -244,6 +243,8 @@ public class Table
             Pot = handBets.Values.Sum(),
             CurrentPlayer = CurrentPlayer,
             HandWinners = handWinners,
+            Roles = playerRoles,
+            Statuses = playerStatuses
         };
         OnGameStateChanged?.Invoke(dto);
     }
@@ -252,8 +253,6 @@ public class Table
     {
         OnPlayerTurn?.Invoke(CurrentPlayer);
     }
-
-    // ... (Keep your Hand Evaluation Logic) ...
 
     private void HandleBet(Player player, int amount)
     {

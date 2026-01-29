@@ -30,6 +30,12 @@
                         Invalid code.
                     </div>
                 }
+                else if (tableIsFull)
+                {
+                    <div class="text-danger mt-1 text-start">
+                        Table if full.
+                    </div>
+                }
             </div>
             
             <form method="post" action="api/auth/logout">
@@ -60,6 +66,10 @@
         {
             tableNotExist = true;
         }
+        else if (GameService.GetTable(joinCode).IsFull())
+        {
+            tableIsFull = true;
+        }
         else if (!string.IsNullOrWhiteSpace(joinCode))
         {
             Navigation.NavigateTo($"/game/{joinCode}");
@@ -69,6 +79,7 @@
     private void HandleJoinCodeInput(ChangeEventArgs e)
     {
         tableNotExist = false;
+        tableIsFull = false;
 
         var input = e.Value?.ToString() ?? string.Empty;
 

@@ -12,6 +12,16 @@
 
 <PageTitle>Game</PageTitle>
 
+<div>
+    <img src="images/tables/basic.png" alt="Poker Table" style="width:55%; height:auto; display:block; margin:0 auto;" />
+
+    <div style="display:flex; justify-content:center; gap:1%; margin-top:20px;">
+        <img src="images/buttons/callOff.png" alt="Call" style="width:8%; height:auto;">
+        <img src="images/buttons/raiseOff.png" alt="Raise" style="width:8%; height:auto;">
+        <img src="images/buttons/foldOff.png" alt="Fold" style="width:8%; height:auto;">
+    </div>
+</div>
+
 @code {
     [Parameter] public string JoinCode { get; set; } = string.Empty;
     private HubConnection? hubConnection;
@@ -19,9 +29,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (GameService.GetTable(JoinCode)==null || GameService.GetTable(JoinCode).IsFull())
+        var table = GameService.GetTable(JoinCode);
+
+        var currentUserName = HttpContextAccessor.HttpContext?.User?.Identity?.Name;
+
+        if (table == null || (table.IsFull() && !table.players.Any(p => p.name == currentUserName)))
         {
             Navigation.NavigateTo($"/");
+            return;
         }
 
         var cookieContainer = new CookieContainer();
