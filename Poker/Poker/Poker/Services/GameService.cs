@@ -27,4 +27,10 @@ public class GameService(IHubContext<PokerHub> hubContext)
     }
 
     public Table? GetTable(string code) => _tables.GetValueOrDefault(code);
+
+    public Table? GetTableByPlayer(string playerName)
+    {
+        return _tables.Values.FirstOrDefault(table =>
+            table.players.Any(p => p.name == playerName));
+    }
 }

@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Models.DTOs;
 using Poker.Models;
-using Shared.Models.DTOs;
 using Shared.Models.Utility;
 
 namespace Poker.Services

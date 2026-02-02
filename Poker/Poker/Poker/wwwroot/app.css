@@ -66,3 +66,22 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+img {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.card-pair {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    width: 18%;
+}
+
+    .card-pair img {
+        width: 48%;
+        height: auto;
+    }

@@ -13,12 +13,78 @@
 <PageTitle>Game</PageTitle>
 
 <div>
-    <img src="images/tables/basic.png" alt="Poker Table" style="width:55%; height:auto; display:block; margin:0 auto;" />
+    <div>
+        <div style="position: relative; width: 55%; margin: 0 auto;">
+            <img src="images/tables/basic.png" alt="Poker Table" style="width: 100%; height: auto; display: block;" />
 
-    <div style="display:flex; justify-content:center; gap:1%; margin-top:20px;">
-        <img src="images/buttons/callOff.png" alt="Call" style="width:8%; height:auto;">
-        <img src="images/buttons/raiseOff.png" alt="Raise" style="width:8%; height:auto;">
-        <img src="images/buttons/foldOff.png" alt="Fold" style="width:8%; height:auto;">
+            <!-- middle -->
+            <div class="card-pair" style="bottom: 0%; left: 50%; transform: translateX(-50%);">
+                <img src="images/cardFaces/default/10c.png" alt="card1" />
+                <img src="images/cardFaces/default/10d.png" alt="card2" />
+            </div>
+            <!-- top right -->
+            <div class="card-pair" style="top: 15%; right: 2%;">
+                <img src="images/cardReverses/carpet.png" alt="card1" />
+                <img src="images/cardReverses/carpet.png" alt="card2" />
+            </div>
+            <!-- middle right -->
+            <div class="card-pair" style="top: 45%; right: -8%;">
+                <img src="images/cardReverses/cat.png" alt="card1" />
+                <img src="images/cardReverses/cat.png" alt="card2" />
+            </div>
+            <!-- bottom right -->
+            <div class="card-pair" style="bottom: 15%; right: 2%;">
+                <img src="images/cardReverses/default.png" alt="card1" />
+                <img src="images/cardReverses/default.png" alt="card2" />
+            </div>
+            <!-- bottom left -->
+            <div class="card-pair" style="bottom: 15%; left: 2%;">
+                <img src="images/cardReverses/skull.png" alt="card1" />
+                <img src="images/cardReverses/skull.png" alt="card2" />
+            </div>
+            <!-- middle left -->
+            <div class="card-pair" style="top: 45%; left: -8%;">
+                <img src="images/cardReverses/greedy.png" alt="card1" />
+                <img src="images/cardReverses/greedy.png" alt="card2" />
+            </div>
+            <!-- top left -->
+            <div class="card-pair" style="top: 15%; left: 2%;">
+                <img src="images/cardReverses/holographic.png" alt="card1" />
+                <img src="images/cardReverses/holographic.png" alt="card2" />
+            </div>
+            
+            <!-- pot -->
+            <div style="position: absolute; bottom: 62%; left: 50%; right: 0; display: flex; justify-content: center; gap: 5px; transform: translateX(-50%);">
+                <h1>POT:</h1>
+            </div>
+
+            <!-- table card 1 -->
+            <div style="position: absolute; bottom: 37%; left: 31%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                <img src="images/cardFaces/default/14h.png" alt="card1" style="width: 100%; height: auto;" />
+            </div>
+            <!-- table card 2 -->
+            <div style="position: absolute; bottom: 37%; left: 40.5%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                <img src="images/cardFaces/default/13h.png" alt="card2" style="width: 100%; height: auto;" />
+            </div>
+            <!-- table card 3 -->
+            <div style="position: absolute; bottom: 37%; left: 50%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                <img src="images/cardFaces/default/12h.png" alt="card3" style="width: 100%; height: auto;" />
+            </div>
+            <!-- table card 4 -->
+            <div style="position: absolute; bottom: 37%; left: 59.5%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                <img src="images/cardFaces/default/11h.png" alt="card3" style="width: 100%; height: auto;" />
+            </div>
+            <!-- table card 5 -->
+            <div style="position: absolute; bottom: 37%; left: 69%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                <img src="images/cardFaces/default/10h.png" alt="card3" style="width: 100%; height: auto;" />
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:1%; margin-top:20px;">
+            <img src="images/buttons/callOff.png" alt="Call" style="width:8%; height:auto;">
+            <img src="images/buttons/raiseOff.png" alt="Raise" style="width:8%; height:auto;">
+            <img src="images/buttons/foldOff.png" alt="Fold" style="width:8%; height:auto;">
+        </div>
     </div>
 </div>
 
@@ -32,8 +98,11 @@
         var table = GameService.GetTable(JoinCode);
 
         var currentUserName = HttpContextAccessor.HttpContext?.User?.Identity?.Name;
+        var playerTable = GameService.GetTableByPlayer(currentUserName);
 
-        if (table == null || (table.IsFull() && !table.players.Any(p => p.name == currentUserName)))
+        if (table == null 
+            || (table.IsFull() && !table.players.Any(p => p.name == currentUserName)) 
+            || (playerTable != null && playerTable.joinCode != JoinCode))
         {
             Navigation.NavigateTo($"/");
             return;

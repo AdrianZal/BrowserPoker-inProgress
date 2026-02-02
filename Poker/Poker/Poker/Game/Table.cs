@@ -1,4 +1,6 @@
-﻿using Poker.Models.DTOs;
+﻿using System.Threading.Tasks;
+using Poker.Models;
+using Poker.Models.DTOs;
 
 namespace Poker.Game;
 
@@ -242,9 +244,9 @@ public class Table
             TableCards = cards,
             Pot = handBets.Values.Sum(),
             CurrentPlayer = CurrentPlayer,
-            HandWinners = handWinners,
             Roles = playerRoles,
-            Statuses = playerStatuses
+            Statuses = playerStatuses,
+            HandWinners = handWinners
         };
         OnGameStateChanged?.Invoke(dto);
     }
@@ -392,7 +394,7 @@ public class Table
         }
     }
 
-    public void AddPlayer(Player player)
+    public async Task AddPlayer(Player player)
     {
         if (players.Count > 6)
             return;
