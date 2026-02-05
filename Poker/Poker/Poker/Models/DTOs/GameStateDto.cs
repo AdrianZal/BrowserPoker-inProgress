@@ -2,9 +2,11 @@
 {
     public class GameStateDto
     {
+        public List<Game.Player> Players { get; set; }
         public Game.Table.GameStage Stage { get; set; }
         public List<Game.Card>? TableCards { get; set; }
         public int Pot { get; set; }
+        public int ToCall { get; set; }
         public Game.Player? CurrentPlayer { get; set; }
         public Dictionary<Game.Player, int>? HandWinners { get; set; }
         public Dictionary<Game.Player, Game.Table.PlayerRole> Roles { get; set; }

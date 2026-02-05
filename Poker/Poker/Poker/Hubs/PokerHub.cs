@@ -117,9 +117,16 @@ namespace PokerServer.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendAction(string joinCode, int amount)
+        public async Task SendAction(string playerName, Poker.Game.Table.Decision decision , int amount)
         {
-            var table = gameService.GetTable(joinCode);
+            var table = gameService.GetTableByPlayer(playerName);
+
+            table.PlayerAction(
+                table.players.First(p => p.name == playerName),
+                decision,
+                amount
+            );
+
         }
     }
 }

@@ -240,9 +240,11 @@ public class Table
     {
         var dto = new GameStateDto
         {
+            Players = players,
             Stage = CurrentStage,
             TableCards = cards,
             Pot = handBets.Values.Sum(),
+            ToCall = toCall,
             CurrentPlayer = CurrentPlayer,
             Roles = playerRoles,
             Statuses = playerStatuses,
