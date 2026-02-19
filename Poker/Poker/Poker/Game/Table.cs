@@ -13,7 +13,7 @@ public class Table
         SmallBlind,
         BigBlind
     }
-    public enum PlayerStatuses
+    public enum PlayerStatus
     {
         Folded,
         ToCall,
@@ -24,12 +24,13 @@ public class Table
     public enum Decision
     {
         Fold,
-        Check,
         Call,
         Raise
     }
     public enum GameStage 
     { 
+        NotPlayable,
+        NotStarted,
         PreFlop, 
         Flop, 
         Turn, 
@@ -60,7 +61,7 @@ public class Table
     Dictionary<Player, int> roundBets = new();
     Dictionary<Player, int> handBets = new();
     Dictionary<Player, PlayerRole> playerRoles = new();
-    Dictionary<Player, PlayerStatuses> playerStatuses = new();
+    Dictionary<Player, PlayerStatus> playerStatuses = new();
     Dictionary<Player, int> handWinners = new();
 
     public Table(int buyIn, string joinCode)
@@ -71,6 +72,7 @@ public class Table
         smallBlind = int.Max(buyIn / 100 / 2, 1);
         minRaise = smallBlind * 2;
         this.joinCode = joinCode;
+        CurrentStage = GameStage.NotPlayable;
     }
 
     public void PlayHand()
@@ -85,7 +87,6 @@ public class Table
         CurrentPlayer = players[_currentPlayerIndex];
 
         NotifyStateUpdate();
-        NotifyPlayerTurn();
     }
 
     // This is the method the SignalR Hub will call
@@ -100,6 +101,11 @@ public class Table
         ProcessDecision(player, decision, amount);
 
         AdvanceGame();
+        if (CurrentStage == GameStage.GameOver)
+        {
+            Thread.Sleep(5000);
+            PlayHand();
+        }
     }
 
     private void ProcessDecision(Player player, Decision decision, int amount)
@@ -107,25 +113,25 @@ public class Table
         switch (decision)
         {
             case Decision.Fold:
-                playerStatuses[player] = PlayerStatuses.Folded;
+                playerStatuses[player] = PlayerStatus.Folded;
                 break;
             case Decision.Call:
                 var callAmount = toCall - roundBets[player];
                 if (player.tableBalance <= callAmount)
                 {
                     HandleBet(player, player.tableBalance);
-                    playerStatuses[player] = PlayerStatuses.AllIn;
+                    playerStatuses[player] = PlayerStatus.AllIn;
                 }
                 else
                 {
                     HandleBet(player, callAmount);
-                    playerStatuses[player] = PlayerStatuses.Checked;
+                    playerStatuses[player] = PlayerStatus.Checked;
                 }
                 break;
             case Decision.Raise:
                 if (amount > player.tableBalance)
                 {
-                    playerStatuses[player] = PlayerStatuses.Folded;
+                    playerStatuses[player] = PlayerStatus.Folded;
                     break;
                 }
 
@@ -133,7 +139,7 @@ public class Table
                 {
                     HandleBet(player, amount);
                     toCall = roundBets.Values.Max();
-                    playerStatuses[player] = PlayerStatuses.AllIn;
+                    playerStatuses[player] = PlayerStatus.AllIn;
                     break;
                 }
 
@@ -142,15 +148,15 @@ public class Table
                 toCall = roundBets.Values.Max();
 
                 if (player.tableBalance == 0)
-                    playerStatuses[player] = PlayerStatuses.AllIn;
+                    playerStatuses[player] = PlayerStatus.AllIn;
                 else
-                    playerStatuses[player] = PlayerStatuses.Checked;
+                    playerStatuses[player] = PlayerStatus.Checked;
                 foreach (var p in players)
                 {
-                    if (p != player && playerStatuses[p] != PlayerStatuses.Folded &&
-                        playerStatuses[p] != PlayerStatuses.AllIn)
+                    if (p != player && playerStatuses[p] != PlayerStatus.Folded &&
+                        playerStatuses[p] != PlayerStatus.AllIn)
                     {
-                        playerStatuses[p] = PlayerStatuses.ToCall;
+                        playerStatuses[p] = PlayerStatus.ToCall;
                     }
                 }
                 break;
@@ -159,7 +165,7 @@ public class Table
 
     private void AdvanceGame()
     {
-        if (playerStatuses.Count(s => s.Value != PlayerStatuses.Folded) == 1)
+        if (playerStatuses.Count(s => s.Value != PlayerStatus.Folded) == 1)
         {
             CurrentStage = GameStage.GameOver;
             handWinners = ResolveRound();
@@ -173,7 +179,7 @@ public class Table
         }
         else
         {
-            bool someoneCanAct = playerStatuses.Any(s => s.Value != PlayerStatuses.Folded && s.Value != PlayerStatuses.AllIn);
+            bool someoneCanAct = playerStatuses.Any(s => s.Value != PlayerStatus.Folded && s.Value != PlayerStatus.AllIn);
 
             if (!someoneCanAct)
             {
@@ -185,16 +191,14 @@ public class Table
             {
                 _currentPlayerIndex = NextIndex(_currentPlayerIndex);
                 CurrentPlayer = players[_currentPlayerIndex];
-            } while (playerStatuses[CurrentPlayer] == PlayerStatuses.Folded || playerStatuses[CurrentPlayer] == PlayerStatuses.AllIn);
-
-            NotifyPlayerTurn();
+            } while (playerStatuses[CurrentPlayer] == PlayerStatus.Folded || playerStatuses[CurrentPlayer] == PlayerStatus.AllIn);
         }
         NotifyStateUpdate();
     }
 
     private bool IsBettingRoundComplete()
     {
-        return playerStatuses.Count(s => s.Value == PlayerStatuses.ToCall || s.Value == PlayerStatuses.ToCheck) == 0;
+        return playerStatuses.Count(s => s.Value == PlayerStatus.ToCall || s.Value == PlayerStatus.ToCheck) == 0;
     }
 
     private void NextStage()
@@ -223,15 +227,14 @@ public class Table
         {
             BettingRoundReset(false);
             _currentPlayerIndex = players.Count == 2 ? bigBlindIndex : smallBlindIndex;
+            CurrentPlayer = players[_currentPlayerIndex];
 
-            while (playerStatuses[CurrentPlayer] == PlayerStatuses.Folded
-                || playerStatuses[CurrentPlayer] == PlayerStatuses.AllIn)
+            while (playerStatuses[CurrentPlayer] == PlayerStatus.Folded
+                || playerStatuses[CurrentPlayer] == PlayerStatus.AllIn)
             {
                 _currentPlayerIndex = NextIndex(_currentPlayerIndex);
                 CurrentPlayer = players[_currentPlayerIndex];
             }
-
-            NotifyPlayerTurn();
         }
     }
 
@@ -243,19 +246,16 @@ public class Table
             Players = players,
             Stage = CurrentStage,
             TableCards = cards,
+            PlayerBets = roundBets.ToDictionary(k => k.Key.name, v => v.Value),
             Pot = handBets.Values.Sum(),
             ToCall = toCall,
+            MinRaise = minRaise,
             CurrentPlayer = CurrentPlayer,
-            Roles = playerRoles,
-            Statuses = playerStatuses,
-            HandWinners = handWinners
+            Roles = playerRoles.ToDictionary(k => k.Key.name, v => v.Value),
+            Statuses = playerStatuses.ToDictionary(k => k.Key.name, v => v.Value),
+            HandWinners = handWinners.ToDictionary(k => k.Key.name, v => v.Value)
         };
         OnGameStateChanged?.Invoke(dto);
-    }
-
-    private void NotifyPlayerTurn()
-    {
-        OnPlayerTurn?.Invoke(CurrentPlayer);
     }
 
     private void HandleBet(Player player, int amount)
@@ -268,7 +268,7 @@ public class Table
     private Dictionary<Player, int> ResolveRound()
     {
         Dictionary<Player, int> winningsByPlayer = new();
-        Dictionary<Player, int> playerScores = players.Where(p => playerStatuses[p] != PlayerStatuses.Folded).ToDictionary(p => p, CheckScore);
+        Dictionary<Player, int> playerScores = players.Where(p => playerStatuses[p] != PlayerStatus.Folded).ToDictionary(p => p, CheckScore);
         
         var levels = handBets.Values.Where(v => v > 0).Distinct().OrderBy(v => v).ToList();
         int prev = 0;
@@ -281,7 +281,7 @@ public class Table
             int potAmount = contributors.Count() * contribution;
 
             var eligible = players
-                .Where(p => handBets[p] >= level && playerStatuses[p] != PlayerStatuses.Folded)
+                .Where(p => handBets[p] >= level && playerStatuses[p] != PlayerStatus.Folded)
                 .ToList();
 
             if (eligible.Count == 0)
@@ -368,30 +368,51 @@ public class Table
             roundBets[player] = 0;
             if (preflop)
             {
-                switch (playerRoles[player])
+                if (players.Count() == 2)
                 {
-                    case PlayerRole.SmallBlind:
-                        roundBets[player] = smallBlind;
-                        handBets[player] = smallBlind;
-                        player.tableBalance -= smallBlind;
-                        playerStatuses[player] = PlayerStatuses.ToCall;
-                        break;
-                    case PlayerRole.BigBlind:
-                        roundBets[player] = smallBlind * 2;
-                        handBets[player] = smallBlind * 2;
-                        player.tableBalance -= smallBlind * 2;
-                        playerStatuses[player] = PlayerStatuses.ToCheck;
-                        break;
-                    default:
-                        handBets[player] = 0;
-                        playerStatuses[player] = PlayerStatuses.ToCall;
-                        break;
+                    switch (playerRoles[player])
+                    {
+                        case PlayerRole.Dealer:
+                            roundBets[player] = smallBlind;
+                            handBets[player] = smallBlind;
+                            player.tableBalance -= smallBlind;
+                            playerStatuses[player] = PlayerStatus.ToCall;
+                            break;
+                        case PlayerRole.BigBlind:
+                            roundBets[player] = smallBlind * 2;
+                            handBets[player] = smallBlind * 2;
+                            player.tableBalance -= smallBlind * 2;
+                            playerStatuses[player] = PlayerStatus.ToCheck;
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (playerRoles[player])
+                    {
+                        case PlayerRole.SmallBlind:
+                            roundBets[player] = smallBlind;
+                            handBets[player] = smallBlind;
+                            player.tableBalance -= smallBlind;
+                            playerStatuses[player] = PlayerStatus.ToCall;
+                            break;
+                        case PlayerRole.BigBlind:
+                            roundBets[player] = smallBlind * 2;
+                            handBets[player] = smallBlind * 2;
+                            player.tableBalance -= smallBlind * 2;
+                            playerStatuses[player] = PlayerStatus.ToCheck;
+                            break;
+                        default:
+                            handBets[player] = 0;
+                            playerStatuses[player] = PlayerStatus.ToCall;
+                            break;
+                    }
                 }
             }
             else
             {
-                if (playerStatuses[player] != PlayerStatuses.Folded && playerStatuses[player] != PlayerStatuses.AllIn)
-                    playerStatuses[player] = PlayerStatuses.ToCheck;
+                if (playerStatuses[player] != PlayerStatus.Folded && playerStatuses[player] != PlayerStatus.AllIn)
+                    playerStatuses[player] = PlayerStatus.ToCheck;
             }
         }
     }
@@ -402,6 +423,11 @@ public class Table
             return;
         players.Add(player);
         roundBets.Add(player, 0);
+        if (players.Count == 2)
+        {
+            CurrentStage = GameStage.NotStarted;
+        }
+        NotifyStateUpdate();
     }
     
     public void RemovePlayer(Player player)

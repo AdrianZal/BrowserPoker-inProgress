@@ -23,6 +23,8 @@ namespace PokerServer.Hubs
             var table = gameService.GetTable(joinCode);
             if (table == null) throw new HubException("Table not found.");
 
+            await Groups.AddToGroupAsync(Context.ConnectionId, joinCode);
+
             var existingPlayer = table.players.FirstOrDefault(p => p.name == playerInfo.Name);
 
             if (existingPlayer == null)
@@ -39,16 +41,22 @@ namespace PokerServer.Hubs
                 }
                 catch
                 {
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, joinCode);
                     throw new HubException("Transaction failed.");
                 }
 
                 var player = new Poker.Game.Player(playerInfo.Name, table.buyIn);
-                table.AddPlayer(player);
+
+                await table.AddPlayer(player);
 
                 await Clients.Group(joinCode).SendAsync("PlayerJoined", player.name);
-            }
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, joinCode);
+                table.NotifyStateUpdate();
+            }
+            else
+            {
+                table.NotifyStateUpdate();
+            }
         }
 
         public async Task LeaveTable(string joinCode)
@@ -117,16 +125,22 @@ namespace PokerServer.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendAction(string playerName, Poker.Game.Table.Decision decision , int amount)
+        public void SendAction(string playerName, Poker.Game.Table.Decision decision, int amount)
         {
             var table = gameService.GetTableByPlayer(playerName);
-
+            if (table == null) throw new HubException("Table not found.");
             table.PlayerAction(
                 table.players.First(p => p.name == playerName),
                 decision,
                 amount
             );
+        }
 
+        public void StartGame(string joinCode)
+        {
+            var table = gameService.GetTable(joinCode);
+            if (table == null) throw new HubException("Table not found.");
+            table.PlayHand();
         }
     }
 }

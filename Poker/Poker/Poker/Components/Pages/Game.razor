@@ -12,99 +12,874 @@
 
 <PageTitle>Game</PageTitle>
 
-<div>
+@if (gameState == null)
+{
+    <div style="text-align: center; margin-top: 50px;">
+        <h3>Loading table...</h3>
+    </div>
+}
+else
+{
     <div>
-        <div style="position: relative; width: 55%; margin: 0 auto;">
-            <img src="images/tables/basic.png" alt="Poker Table" style="width: 100%; height: auto; display: block;" />
+        <div>
+            <div style="position: relative; width: 55%; margin: 0 auto;">
+                <img src="images/tables/basic.png" alt="Poker Table" style="width: 100%; height: auto; display: block;" />
 
-            <!-- middle -->
-            @if(gameState.Players.Count > 0)
+                @* <!-- top right -->
+                    <div class="card-pair" style="top: 15%; right: 2%;">
+                        <img src="images/cardReverses/default.png" alt="card1" />
+                        <img src="images/cardReverses/default.png" alt="card2" />
+                    </div>
+
+                    <div class="name-top-right">
+                    <h1>Ugga</h1>
+                    </div>
+
+                    <div class="balance balance-top-right">
+                        <h1>1000</h1>
+                    </div>
+
+                <div class="bet-top-right">
+                        <h1>9999</h1>
+                    </div>
+
+                    <div class="token-top-right">
+                        <img src="images/dealerTokens/default.png" alt="token" />
+                    </div>
+
+                <!-- middle right -->
+                    <div class="card-pair" style="top: 45%; right: -8%;">
+                        <img src="images/cardReverses/default.png" alt="card1" />
+                        <img src="images/cardReverses/default.png" alt="card2" />
+                    </div>
+
+                    <div class="name-mid-right">
+                        <h1>Ugga</h1>
+                    </div>
+                <div class="balance balance-mid-right">
+                    <h1>1000</h1>
+                </div>
+
+                <div class="bet-mid-right">
+                        <h1>9999P</h1>
+                    </div>
+
+                    <div class="token-mid-right">
+                        <img src="images/dealerTokens/default.png" alt="token" />
+                    </div>
+
+                <!-- bottom right -->
+                    <div class="card-pair" style="bottom: 15%; right: 2%;">
+                        <img src="images/cardReverses/default.png" alt="card1" />
+                        <img src="images/cardReverses/default.png" alt="card2" />
+                    </div>
+
+                    <div class="name-bot-right">
+                    <h1>Ugefe sfsega</h1>
+                    </div>
+
+                <div class="balance balance-bot-right">
+                    <h1>1000</h1>
+                </div>
+
+                <div class="bet-bot-right">
+                        <h1>9999</h1>
+                    </div>
+
+                    <div class="token-bot-right">
+                        <img src="images/dealerTokens/default.png" alt="token" />
+                    </div>
+
+                <!-- middle -->
+                    <div class="card-pair" style="bottom: 8%; left: 50%; transform: translateX(-50%);">
+                        <img src="images/cardReverses/default.png" alt="card1" />
+                        <img src="images/cardReverses/default.png" alt="card2" />
+                    </div>
+
+                    <div class="name-mid">
+                        <h1>Ugfwafafwga</h1>
+                    </div>
+
+                <div class="balance balance-mid">
+                    <h1>1000</h1>
+                </div>
+
+                    <div class="bet-mid">
+                        <h1>9999</h1>
+                    </div>
+
+                    <div class="token-mid">
+                        <img src="images/dealerTokens/default.png" alt="token" />
+                    </div>
+
+                <!-- bottom left -->
+                    <div class="card-pair" style="bottom: 15%; left: 2%;">
+                        <img src="images/cardReverses/default.png" alt="card1" />
+                        <img src="images/cardReverses/default.png" alt="card2" />
+                    </div>
+
+                    <div class="name-bot-left">
+                    <h1>Ugga</h1>
+                    </div>
+
+                <div class="balance balance-bot-left">
+                    <h1>1000</h1>
+                </div>
+
+                <div class="bet-bot-left">
+                        <h1>9999</h1>
+                    </div>
+
+                    <div class="token-bot-left">
+                        <img src="images/dealerTokens/default.png" alt="token" />
+                    </div>
+
+                <!-- middle left -->
+                    <div class="card-pair" style="top: 45%; left: -8%;">
+                        <img src="images/cardReverses/default.png" alt="card1" />
+                        <img src="images/cardReverses/default.png" alt="card2" />
+                    </div>
+
+                    <div class="name-mid-left">
+                    <h1>Ugga</h1>
+                    </div>
+
+                <div class="balance balance-mid-left">
+                    <h1>1000</h1>
+                </div>
+
+                <div class="bet-mid-left">
+                        <h1>9999</h1>
+                    </div>
+
+                    <div class="token-mid-left">
+                        <img src="images/dealerTokens/default.png" alt="token" />
+                    </div>
+
+                <!-- top left -->
+                    <div class="card-pair" style="top: 15%; left: 2%;">
+                        <img src="images/cardReverses/default.png" alt="card1" />
+                        <img src="images/cardReverses/default.png" alt="card2" />
+                    </div>
+
+                    <div class="name-top-left">
+                    <h1>Ugga</h1>
+                    </div>
+
+                <div class="balance balance-top-left">
+                    <h1>1000</h1>
+                </div>
+
+                <div class="bet-top-left">
+                        <h1>9999</h1>
+                    </div>
+
+                    <div class="token-top-left">
+                        <img src="images/dealerTokens/default.png" alt="token" />
+                    </div> *@
+
+                
+
+                <!-- top right -->
+                @if (gameState.Players.Count > 0)
+                {
+                    <div class="card-pair" style="top: 15%; right: 2%;">
+                        @if (gameState.Players[0].name == currentUserName && gameState.Players[0].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        {
+                            <img src="@($"images/cardFaces/default/{gameState.Players[0].cards[0].Value}{gameState.Players[0].cards[0].Suit}.png")" alt="card1" />
+                            <img src="@($"images/cardFaces/default/{gameState.Players[0].cards[1].Value}{gameState.Players[0].cards[1].Suit}.png")" alt="card2" />
+                        }
+                        else if (gameState.Players[0].cards.Count() == 2)
+                        {
+                            <img src="images/cardReverses/default.png" alt="card1" />
+                            <img src="images/cardReverses/default.png" alt="card2" />
+                        }
+                    </div>
+                    <div class="name-top-right">
+                        @if (gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == gameState.Players[0].name)
+                        {
+                            <h1 style="color: lawngreen">@gameState.Players[0].name</h1>
+                        }
+                        else
+                        {
+                            <h1 style="color: red">@gameState.Players[0].name</h1>
+                        }
+                    </div>
+
+                    <div class="balance balance-top-right">
+                        <h1>@gameState.Players[0].tableBalance</h1>
+                    </div>
+
+                    <div class="bet bet-top-right">
+                        @if (gameState.PlayerBets.Count() != 0 && gameState.Stage != Poker.Game.Table.GameStage.NotPlayable && gameState.Stage != Poker.Game.Table.GameStage.NotStarted)
+                        {
+                            <h1>@gameState.PlayerBets.ElementAt(0).Value</h1>
+                        }
+                    </div>
+
+                    <div class="token-top-right">
+                        @if (gameState.Roles.Count() != 0 && gameState.Roles.ElementAt(0).Value == Poker.Game.Table.PlayerRole.Dealer)
+                        {
+                            <img src="images/dealerTokens/default.png" alt="token" />
+                        }
+                    </div>
+                }
+
+                <!-- middle right -->
+                @if (gameState.Players.Count > 1)
+                {
+                    <div class="card-pair" style="top: 45%; right: -8%;">
+                        @if (gameState.Players[1].name == currentUserName && gameState.Players[1].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        {
+                            <img src="@($"images/cardFaces/default/{gameState.Players[1].cards[0].Value}{gameState.Players[1].cards[0].Suit}.png")" alt="card1" />
+                            <img src="@($"images/cardFaces/default/{gameState.Players[1].cards[1].Value}{gameState.Players[1].cards[1].Suit}.png")" alt="card2" />
+                        }
+                        else if (gameState.Players[1].cards.Count() == 2)
+                        {
+                            <img src="images/cardReverses/default.png" alt="card1" />
+                            <img src="images/cardReverses/default.png" alt="card2" />
+                        }
+                    </div>
+                    <div class="name-mid-right">
+                        @if (gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == gameState.Players[1].name)
+                        {
+                            <h1 style="color: lawngreen">@gameState.Players[1].name</h1>
+                        }
+                        else
+                        {
+                            <h1 style="color: red">@gameState.Players[1].name</h1>
+                        }
+                    </div>
+
+                    <div class="balance balance-mid-right">
+                        <h1>@gameState.Players[1].tableBalance</h1>
+                    </div>
+
+                    <div class="bet bet-mid-right">
+                        @if (gameState.PlayerBets.Count() != 0 && gameState.Stage != Poker.Game.Table.GameStage.NotPlayable && gameState.Stage != Poker.Game.Table.GameStage.NotStarted)
+                        {
+                            <h1>@gameState.PlayerBets.ElementAt(1).Value</h1>
+                        }
+                    </div>
+
+                    <div class="token-mid-right">
+                        @if (gameState.Roles.Count() != 0 && gameState.Roles.ElementAt(1).Value == Poker.Game.Table.PlayerRole.Dealer)
+                        {
+                            <img src="images/dealerTokens/default.png" alt="token" />
+                        }
+                    </div>
+                }
+
+                <!-- bottom right -->
+                @if (gameState.Players.Count > 2)
+                {
+                    <div class="card-pair" style="bottom: 15%; right: 2%;">
+                        @if (gameState.Players[2].name == currentUserName && gameState.Players[2].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        {
+                            <img src="@($"images/cardFaces/default/{gameState.Players[2].cards[0].Value}{gameState.Players[2].cards[0].Suit}.png")" alt="card1" />
+                            <img src="@($"images/cardFaces/default/{gameState.Players[2].cards[1].Value}{gameState.Players[2].cards[1].Suit}.png")" alt="card2" />
+                        }
+                        else if (gameState.Players[2].cards.Count() == 2)
+                        {
+                            <img src="images/cardReverses/default.png" alt="card1" />
+                            <img src="images/cardReverses/default.png" alt="card2" />
+                        }
+                    </div>
+                    <div class="name-bot-right">
+                        @if (gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == gameState.Players[2].name)
+                        {
+                            <h1 style="color: lawngreen">@gameState.Players[2].name</h1>
+                        }
+                        else
+                        {
+                            <h1 style="color: red">@gameState.Players[2].name</h1>
+                        }
+                    </div>
+
+                    <div class="balance balance-bot-right">
+                        <h1>@gameState.Players[2].tableBalance</h1>
+                    </div>
+
+                    <div class="bet bet-bot-right">
+                        @if (gameState.PlayerBets.Count() != 0 && gameState.Stage != Poker.Game.Table.GameStage.NotPlayable && gameState.Stage != Poker.Game.Table.GameStage.NotStarted)
+                        {
+                            <h1>@gameState.PlayerBets.ElementAt(2).Value</h1>
+                        }
+                    </div>
+
+                    <div class="token-bot-right">
+                        @if (gameState.Roles.Count() != 0 && gameState.Roles.ElementAt(2).Value == Poker.Game.Table.PlayerRole.Dealer)
+                        {
+                            <img src="images/dealerTokens/default.png" alt="token" />
+                        }
+                    </div>
+                }
+
+                <!-- middle -->
+                @if (gameState.Players.Count > 3)
+                {
+                    <div class="card-pair" style="bottom: 8%; left: 50%; transform: translateX(-50%);">
+                        @if (gameState.Players[3].name == currentUserName && gameState.Players[3].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        {
+                            <img src="@($"images/cardFaces/default/{gameState.Players[3].cards[0].Value}{gameState.Players[3].cards[0].Suit}.png")" alt="card1" />
+                            <img src="@($"images/cardFaces/default/{gameState.Players[3].cards[1].Value}{gameState.Players[3].cards[1].Suit}.png")" alt="card2" />
+                        }
+                        else if (gameState.Players[3].cards.Count() == 2)
+                        {
+                            <img src="images/cardReverses/default.png" alt="card1" />
+                            <img src="images/cardReverses/default.png" alt="card2" />
+                        }
+                    </div>
+                    <div class="name-mid">
+                        @if (gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == gameState.Players[3].name)
+                        {
+                            <h1 style="color: lawngreen">@gameState.Players[3].name</h1>
+                        }
+                        else
+                        {
+                            <h1 style="color: red">@gameState.Players[3].name</h1>
+                        }
+                    </div>
+
+                    <div class="balance balance-mid">
+                        <h1>@gameState.Players[3].tableBalance</h1>
+                    </div>
+
+                    <div class="bet bet-mid">
+                        @if (gameState.PlayerBets.Count() != 0 && gameState.Stage != Poker.Game.Table.GameStage.NotPlayable && gameState.Stage != Poker.Game.Table.GameStage.NotStarted)
+                        {
+                            <h1>@gameState.PlayerBets.ElementAt(3).Value</h1>
+                        }
+                    </div>
+
+                    <div class="token-mid">
+                        @if (gameState.Roles.Count() != 0 && gameState.Roles.ElementAt(3).Value == Poker.Game.Table.PlayerRole.Dealer)
+                        {
+                            <img src="images/dealerTokens/default.png" alt="token" />
+                        }
+                    </div>
+                }
+
+                <!-- bottom left -->
+                @if (gameState.Players.Count > 4)
+                {
+                    <div class="card-pair" style="bottom: 15%; left: 2%;">
+                        @if (gameState.Players[4].name == currentUserName && gameState.Players[4].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        {
+                            <img src="@($"images/cardFaces/default/{gameState.Players[4].cards[0].Value}{gameState.Players[4].cards[0].Suit}.png")" alt="card1" />
+                            <img src="@($"images/cardFaces/default/{gameState.Players[4].cards[1].Value}{gameState.Players[4].cards[1].Suit}.png")" alt="card2" />
+                        }
+                        else if (gameState.Players[4].cards.Count() == 2)
+                        {
+                            <img src="images/cardReverses/default.png" alt="card1" />
+                            <img src="images/cardReverses/default.png" alt="card2" />
+                        }
+                    </div>
+                    <div class="name-bot-left">
+                        @if (gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == gameState.Players[4].name)
+                        {
+                            <h1 style="color: lawngreen">@gameState.Players[4].name</h1>
+                        }
+                        else
+                        {
+                            <h1 style="color: red">@gameState.Players[4].name</h1>
+                        }
+                    </div>
+
+                    <div class="balance balance-bot-left">
+                        <h1>@gameState.Players[4].tableBalance</h1>
+                    </div>
+
+                    <div class="bet bet-bot-left">
+                        @if (gameState.PlayerBets.Count() != 0 && gameState.Stage != Poker.Game.Table.GameStage.NotPlayable && gameState.Stage != Poker.Game.Table.GameStage.NotStarted)
+                        {
+                            <h1>@gameState.PlayerBets.ElementAt(4).Value</h1>
+                        }
+                    </div>
+
+                    <div class="token-bot-left">
+                        @if (gameState.Roles.Count() != 0 && gameState.Roles.ElementAt(4).Value == Poker.Game.Table.PlayerRole.Dealer)
+                        {
+                            <img src="images/dealerTokens/default.png" alt="token" />
+                        }
+                    </div>
+                }
+                
+                <!-- middle left -->
+                @if (gameState.Players.Count > 5)
+                {
+                    <div class="card-pair" style="top: 45%; left: -8%;">
+                        @if (gameState.Players[5].name == currentUserName && gameState.Players[5].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        {
+                            <img src="@($"images/cardFaces/default/{gameState.Players[5].cards[0].Value}{gameState.Players[5].cards[0].Suit}.png")" alt="card1" />
+                            <img src="@($"images/cardFaces/default/{gameState.Players[5].cards[1].Value}{gameState.Players[5].cards[1].Suit}.png")" alt="card2" />
+                        }
+                        else if (gameState.Players[5].cards.Count() == 2)
+                        {
+                            <img src="images/cardReverses/default.png" alt="card1" />
+                            <img src="images/cardReverses/default.png" alt="card2" />
+                        }
+                    </div>
+                    <div class="name-mid-left">
+                        @if (gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == gameState.Players[5].name)
+                        {
+                            <h1 style="color: lawngreen">@gameState.Players[5].name</h1>
+                        }
+                        else
+                        {
+                            <h1 style="color: red">@gameState.Players[5].name</h1>
+                        }
+                    </div>
+
+                    <div class="balance balance-mid-left">
+                        <h1>@gameState.Players[5].tableBalance</h1>
+                    </div>
+
+                    <div class="bet bet-mid-left">
+                        @if (gameState.PlayerBets.Count() != 0 && gameState.Stage != Poker.Game.Table.GameStage.NotPlayable && gameState.Stage != Poker.Game.Table.GameStage.NotStarted)
+                        {
+                            <h1>@gameState.PlayerBets.ElementAt(5).Value</h1>
+                        }
+                    </div>
+
+                    <div class="token-mid-left">
+                        @if (gameState.Roles.Count() != 0 && gameState.Roles.ElementAt(5).Value == Poker.Game.Table.PlayerRole.Dealer)
+                        {
+                            <img src="images/dealerTokens/default.png" alt="token" />
+                        }
+                    </div>
+                }
+                
+                <!-- top left -->
+                @if (gameState.Players.Count > 6)
+                {
+                    <div class="card-pair" style="top: 15%; left: 2%;">
+                        @if (gameState.Players[6].name == currentUserName && gameState.Players[6].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        {
+                            <img src="@($"images/cardFaces/default/{gameState.Players[6].cards[0].Value}{gameState.Players[6].cards[0].Suit}.png")" alt="card1" />
+                            <img src="@($"images/cardFaces/default/{gameState.Players[6].cards[1].Value}{gameState.Players[6].cards[1].Suit}.png")" alt="card2" />
+                        }
+                        else if (gameState.Players[6].cards.Count() == 2)
+                        {
+                            <img src="images/cardReverses/default.png" alt="card1" />
+                            <img src="images/cardReverses/default.png" alt="card2" />
+                        }
+                    </div>
+                    <div class="name-top-left">
+                        @if (gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == gameState.Players[6].name)
+                        {
+                            <h1 style="color: lawngreen">@gameState.Players[6].name</h1>
+                        }
+                        else
+                        {
+                            <h1 style="color: red">@gameState.Players[6].name</h1>
+                        }
+                    </div>
+
+                    <div class="balance balance-top-left">
+                        <h1>@gameState.Players[6].tableBalance</h1>
+                    </div>
+
+                    <div class="bet bet-top-left">
+                        @if (gameState.PlayerBets.Count() != 0 && gameState.Stage != Poker.Game.Table.GameStage.NotPlayable && gameState.Stage != Poker.Game.Table.GameStage.NotStarted)
+                        {
+                            <h1>@gameState.PlayerBets.ElementAt(6).Value</h1>
+                        }
+                    </div>
+
+                    <div class="token-top-left">
+                        @if (gameState.Roles.Count() != 0 && gameState.Roles.ElementAt(6).Value == Poker.Game.Table.PlayerRole.Dealer)
+                        {
+                            <img src="images/dealerTokens/default.png" alt="token" />
+                        }
+                    </div>
+                }
+
+
+                <!-- pot/winners -->
+                @if (gameState.HandWinners.Count() == 0)
+                {
+                    <div style="position: absolute; bottom: 62%; left: 50%; right: 0; display: flex; justify-content: center; gap: 5px; transform: translateX(-50%);">
+                        <h1 style="color: orange">@gameState.Pot</h1>
+                    </div>
+                }
+                else
+                {
+                    <div class="winners">
+                    @foreach(var winner in gameState.HandWinners)
+                    {
+                        <h1>@winner.Key: @winner.Value</h1>
+					}
+                    </div>
+                }
+               
+                
+
+                <!-- table card 1 -->
+                <div style="position: absolute; bottom: 37%; left: 31%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                    @if (gameState.TableCards != null && gameState.TableCards.Count > 0)
+                    {
+                        <img src="@($"images/cardFaces/default/{gameState.TableCards[0].Value}{gameState.TableCards[0].Suit}.png")" alt="card1" style="width: 100%; height: auto;" />
+                    }
+                </div>
+
+                <!-- table card 2 -->
+                <div style="position: absolute; bottom: 37%; left: 40.5%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                    @if (gameState.TableCards != null && gameState.TableCards.Count > 1)
+                    {
+                        <img src="@($"images/cardFaces/default/{gameState.TableCards[1].Value}{gameState.TableCards[1].Suit}.png")" alt="card1" style="width: 100%; height: auto;" />
+                    }
+                </div>
+
+                <!-- table card 3 -->
+                <div style="position: absolute; bottom: 37%; left: 50%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                    @if (gameState.TableCards != null && gameState.TableCards.Count > 2)
+                    {
+                        <img src="@($"images/cardFaces/default/{gameState.TableCards[2].Value}{gameState.TableCards[2].Suit}.png")" alt="card1" style="width: 100%; height: auto;" />
+                    }
+                </div>
+
+                <!-- table card 4 -->
+                <div style="position: absolute; bottom: 37%; left: 59.5%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                    @if (gameState.TableCards != null && gameState.TableCards.Count > 3)
+                    {
+                        <img src="@($"images/cardFaces/default/{gameState.TableCards[3].Value}{gameState.TableCards[3].Suit}.png")" alt="card1" style="width: 100%; height: auto;" />
+                    }
+                </div>
+
+                <!-- table card 5 -->
+                <div style="position: absolute; bottom: 37%; left: 69%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
+                    @if (gameState.TableCards != null && gameState.TableCards.Count > 4)
+                    {
+                        <img src="@($"images/cardFaces/default/{gameState.TableCards[4].Value}{gameState.TableCards[4].Suit}.png")" alt="card1" style="width: 100%; height: auto;" />
+                    }
+                </div>
+            </div>
+
+            @if (gameState.Stage == Poker.Game.Table.GameStage.NotPlayable)
             {
-                <div class="card-pair" style="bottom: 0%; left: 50%; transform: translateX(-50%);">
-                    <img src="images/cardFaces/default/10c.png" alt="card1" />
-                    <img src="images/cardFaces/default/10d.png" alt="card2" />
+                <div class="start-button">
+                    <img src=@startButtonImage alt="Start" />
                 </div>
             }
-            
-            <!-- top right -->
-            @if(gameState.Players.Count > 1)
+            else if (gameState.Stage == Poker.Game.Table.GameStage.NotStarted)
             {
-                <div class="card-pair" style="top: 15%; right: 2%;">
-                    <img src="images/cardReverses/carpet.png" alt="card1" />
-                <img src="images/cardReverses/carpet.png" alt="card2" />
+                <div class="start-button">
+                    <img src=@startButtonImage alt="Start"
+                         @onmouseout="() => OffButton(Button.Start)"
+                         @onmouseover="() => OverButton(Button.Start)"
+                         @onmousedown="() => ClickButton(Button.Start)"
+                         @onmouseup="() => OverButton(Button.Start)">
                 </div>
             }
-            <!-- middle right -->
-            <div class="card-pair" style="top: 45%; right: -8%;">
-                <img src="images/cardReverses/cat.png" alt="card1" />
-                <img src="images/cardReverses/cat.png" alt="card2" />
-            </div>
-            <!-- bottom right -->
-            <div class="card-pair" style="bottom: 15%; right: 2%;">
-                <img src="images/cardReverses/default.png" alt="card1" />
-                <img src="images/cardReverses/default.png" alt="card2" />
-            </div>
-            <!-- bottom left -->
-            <div class="card-pair" style="bottom: 15%; left: 2%;">
-                <img src="images/cardReverses/skull.png" alt="card1" />
-                <img src="images/cardReverses/skull.png" alt="card2" />
-            </div>
-            <!-- middle left -->
-            <div class="card-pair" style="top: 45%; left: -8%;">
-                <img src="images/cardReverses/greedy.png" alt="card1" />
-                <img src="images/cardReverses/greedy.png" alt="card2" />
-            </div>
-            <!-- top left -->
-            <div class="card-pair" style="top: 15%; left: 2%;">
-                <img src="images/cardReverses/holographic.png" alt="card1" />
-                <img src="images/cardReverses/holographic.png" alt="card2" />
-            </div>
-            
-            <!-- pot -->
-            <div style="position: absolute; bottom: 62%; left: 50%; right: 0; display: flex; justify-content: center; gap: 5px; transform: translateX(-50%);">
-                <h1>POT:</h1>
-            </div>
 
-            <!-- table card 1 -->
-            <div style="position: absolute; bottom: 37%; left: 31%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
-                <img src="images/cardFaces/default/14h.png" alt="card1" style="width: 100%; height: auto;" />
-            </div>
-            <!-- table card 2 -->
-            <div style="position: absolute; bottom: 37%; left: 40.5%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
-                <img src="images/cardFaces/default/13h.png" alt="card2" style="width: 100%; height: auto;" />
-            </div>
-            <!-- table card 3 -->
-            <div style="position: absolute; bottom: 37%; left: 50%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
-                <img src="images/cardFaces/default/12h.png" alt="card3" style="width: 100%; height: auto;" />
-            </div>
-            <!-- table card 4 -->
-            <div style="position: absolute; bottom: 37%; left: 59.5%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
-                <img src="images/cardFaces/default/11h.png" alt="card3" style="width: 100%; height: auto;" />
-            </div>
-            <!-- table card 5 -->
-            <div style="position: absolute; bottom: 37%; left: 69%; right: 0; width: 9%; display: flex; justify-content: center; transform: translateX(-50%);">
-                <img src="images/cardFaces/default/10h.png" alt="card3" style="width: 100%; height: auto;" />
-            </div>
-        </div>
+            @if (!rising)
+            {
+                <div style="display:flex; justify-content:center; gap:1%; margin-top:20px;">
+                    <img src=@checkCallButtonImage alt="CheckCall" style="width:8%; height:auto;"
+                         @onmouseout="() => OffButton(Button.CheckCall)"
+                         @onmouseover="() => OverButton(Button.CheckCall)"
+                         @onmousedown="() => ClickButton(Button.CheckCall)"
+                         @onmouseup="() => OverButton(Button.CheckCall)">
+                    <img src=@raiseButtonImage alt="Raise" style="width:8%; height:auto;"
+                         @onmouseout="() => OffButton(Button.Raise)"
+                         @onmouseover="() => OverButton(Button.Raise)"
+                         @onmousedown="() => ClickButton(Button.Raise)"
+                         @onmouseup="() => OverButton(Button.Raise)">
+                    <img src=@foldButtonImage alt="Fold" style="width:8%; height:auto;"
+                         @onmouseout="() => OffButton(Button.Fold)"
+                         @onmouseover="() => OverButton(Button.Fold)"
+                         @onmousedown="() => ClickButton(Button.Fold)"
+                         @onmouseup="() => OverButton(Button.Fold)">
+                </div>
+            }
+            else
+            {
+                <div style="display:flex; justify-content:center; gap:1%; margin-top:20px;">
+                    <img src=@cancelButtonImage alt="Cancel" style="width:4%; height:auto;"
+                         @onmouseout="() => OffButton(Button.Cancel)"
+                         @onmouseover="() => OverButton(Button.Cancel)"
+                         @onmousedown="() => ClickButton(Button.Cancel)"
+                         @onmouseup="() => OverButton(Button.Cancel)"
+                         @on>
+                    <img src=@minusButtonImage alt="Minus" style="width:4%; height:auto;"
+                         @onmouseout="() => OffButton(Button.Minus)"
+                         @onmouseover="() => OverButton(Button.Minus)"
+                         @onmousedown="() => ClickButton(Button.Minus)"
+                         @onmouseup="() => OverButton(Button.Minus)">
 
-        <div style="display:flex; justify-content:center; gap:1%; margin-top:20px;">
-            <img src="images/buttons/callOff.png" alt="Call" style="width:8%; height:auto;">
-            <img src="images/buttons/raiseOff.png" alt="Raise" style="width:8%; height:auto;">
-            <img src="images/buttons/foldOff.png" alt="Fold" style="width:8%; height:auto;">
+                    <div style="position: relative; width: 8%; display: inline-block;">
+                        <img src="images/buttons/inputField.png" alt="InputField" style="width: 100%; height: auto; display: block;" />
+
+						<input class="no-arrows" type="number" @bind="raiseAmount"
+                               style="position: absolute;
+                                  top: 50%;
+                                  left: 50%;
+                                  transform: translate(-50%, -50%);
+                                  width: 80%;
+                                  background: transparent;
+                                  border: none;
+                                  text-align: center;
+                                  outline: none;" />
+                    </div>
+
+                    <img src=@plusButtonImage alt="Plus" style="width:4%; height:auto;"
+                         @onmouseout="() => OffButton(Button.Plus)"
+                         @onmouseover="() => OverButton(Button.Plus)"
+                         @onmousedown="() => ClickButton(Button.Plus)"
+                         @onmouseup="() => OverButton(Button.Plus)">
+                    <img src=@okButtonImage alt="Ok" style="width:4%; height:auto;"
+                         @onmouseout="() => OffButton(Button.Ok)"
+                         @onmouseover="() => OverButton(Button.Ok)"
+                         @onmousedown="() => ClickButton(Button.Ok)"
+                         @onmouseup="() => OverButton(Button.Ok)">
+				</div>
+            }
+
         </div>
     </div>
-</div>
+}
 
 @code {
+
     [Parameter] public string JoinCode { get; set; } = string.Empty;
     private HubConnection? hubConnection;
     private GameStateDto? gameState;
+    private string currentUserName;
+
+    private bool rising = false;
+    private int _raiseAmount = 0;
+    private int raiseAmount
+    {
+        get => _raiseAmount;
+        set
+        {
+            if (gameState != null)
+            {
+                var myPlayer = gameState.Players.First(p => p.name == currentUserName);
+                if (myPlayer != null)
+                {
+                    int myBalance = myPlayer.tableBalance;
+
+                    if (value > myBalance)
+                    {
+                        _raiseAmount = myBalance;
+                    }
+                    else if (value < gameState.MinRaise && myBalance > gameState.MinRaise)
+                    {
+                        _raiseAmount = gameState.MinRaise;
+                    }
+                    else
+                    {
+                        _raiseAmount = value;
+                    }
+                    return;
+                }
+            }
+            _raiseAmount = value;
+        }
+    }
+    private int plusMinusStep = 0;
+
+    private string startButtonImage = "images/buttons/startOff.png";
+    private string checkCallButtonImage = "images/buttons/checkOff.png";
+    private string raiseButtonImage = "images/buttons/raiseOff.png";
+    private string foldButtonImage = "images/buttons/foldOff.png";
+
+    private string cancelButtonImage = "images/buttons/cancelOff.png";
+    private string minusButtonImage = "images/buttons/minusOff.png";
+    private string plusButtonImage = "images/buttons/plusOff.png";
+    private string okButtonImage = "images/buttons/okOff.png";
+
+    private enum Button
+    {
+        Start,
+        CheckCall,
+        Raise,
+        Fold,
+        Cancel,
+        Minus,
+        Plus,
+        Ok
+    }
+
+    private void OffButton(Button button)
+    {
+        switch (button)
+        {
+            case Button.Start:
+                startButtonImage = "images/buttons/startOff.png";
+                break;
+            case Button.CheckCall:
+                if (gameState != null && gameState.Statuses.Count() != 0 && gameState.Statuses[currentUserName] == Poker.Game.Table.PlayerStatus.ToCall)
+                {
+                    checkCallButtonImage = "images/buttons/callOff.png";
+                }
+                else
+                {
+                    checkCallButtonImage = "images/buttons/checkOff.png";
+                }
+                break;
+            case Button.Raise:
+                raiseButtonImage = "images/buttons/raiseOff.png";
+                break;
+            case Button.Fold:
+                foldButtonImage = "images/buttons/foldOff.png";
+                break;
+            case Button.Cancel:
+                cancelButtonImage = "images/buttons/cancelOff.png";
+                break;
+            case Button.Minus:
+                minusButtonImage = "images/buttons/minusOff.png";
+                break;
+            case Button.Plus:
+                plusButtonImage = "images/buttons/plusOff.png";
+                break;
+            case Button.Ok:
+                okButtonImage = "images/buttons/okOff.png";
+                break;
+        }
+    }
+
+    private void OverButton(Button button)
+    {
+        switch(button)
+        {
+            case Button.Start:
+                startButtonImage = "images/buttons/startOn.png";
+                break;
+            case Button.CheckCall:
+                if (gameState != null && gameState.Statuses.Count() != 0 && gameState.Statuses[currentUserName] == Poker.Game.Table.PlayerStatus.ToCall)
+                {
+                    checkCallButtonImage = "images/buttons/callOn.png";
+                }
+                else
+                {
+                    checkCallButtonImage = "images/buttons/checkOn.png";
+                }
+                break;
+            case Button.Raise:
+                raiseButtonImage = "images/buttons/raiseOn.png";
+                break;
+            case Button.Fold:
+                foldButtonImage = "images/buttons/foldOn.png";
+                break;
+            case Button.Cancel:
+                cancelButtonImage = "images/buttons/cancelOn.png";
+                break;
+            case Button.Minus:
+                minusButtonImage = "images/buttons/minusOn.png";
+                break;
+            case Button.Plus:
+                plusButtonImage = "images/buttons/plusOn.png";
+                break;
+            case Button.Ok:
+                okButtonImage = "images/buttons/okOn.png";
+                break;
+        }
+    }
+
+    private void ClickButton(Button button)
+    {
+        switch (button)
+        {
+            case Button.Start:
+                startButtonImage = "images/buttons/startClick.png";
+                if (gameState != null && gameState.Stage == Poker.Game.Table.GameStage.NotStarted)
+                {
+                    hubConnection?.InvokeAsync("StartGame", JoinCode);
+                }
+                break;
+            case Button.CheckCall:
+                if (gameState != null && gameState.Statuses.Count() != 0 && gameState.Statuses[currentUserName] == Poker.Game.Table.PlayerStatus.ToCall)
+                {
+                    checkCallButtonImage = "images/buttons/callClick.png";
+                }
+                else
+                {
+                    checkCallButtonImage = "images/buttons/checkClick.png";
+                }
+                if (gameState != null && gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == currentUserName)
+                {
+                    hubConnection?.InvokeAsync("SendAction", currentUserName, Poker.Game.Table.Decision.Call, 0);
+                }
+                break;
+            case Button.Raise:
+                raiseButtonImage = "images/buttons/raiseClick.png";
+                if(gameState != null && gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == currentUserName)
+                {
+					raiseAmount = gameState.MinRaise;
+                    OffButton(Button.Cancel);
+                    OffButton(Button.Ok);
+                    rising = true;
+                }
+                break;
+            case Button.Fold:
+                foldButtonImage = "images/buttons/foldClick.png";
+                if (gameState != null && gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == currentUserName)
+                {
+                    hubConnection?.InvokeAsync("SendAction", currentUserName, Poker.Game.Table.Decision.Fold, 0);
+                }
+                break;
+            case Button.Cancel:
+                cancelButtonImage = "images/buttons/cancelClick.png";
+                OffButton(Button.Raise);
+                rising = false;
+                break;
+            case Button.Minus:
+                minusButtonImage = "images/buttons/minusClick.png";
+                if (gameState != null)
+                {
+                    if (raiseAmount - plusMinusStep >= gameState.MinRaise)
+                    {
+                        raiseAmount -= plusMinusStep;
+                    }
+                    else
+                    {
+                        raiseAmount = gameState.MinRaise;
+                    }
+                }
+                break;
+            case Button.Plus:
+                plusButtonImage = "images/buttons/plusClick.png";
+                if (gameState != null)
+                {
+                    var balance = gameState.Players.First(p => p.name == currentUserName).tableBalance;
+
+                    if (raiseAmount + plusMinusStep <= balance)
+                    {
+                        raiseAmount += plusMinusStep;
+                    }
+                    else
+                    {
+                        raiseAmount = balance;
+                    }
+                }
+                break;
+			case Button.Ok:
+				okButtonImage = "images/buttons/okClick.png";
+                if (gameState != null && gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == currentUserName)
+                {
+                    var myBalance = gameState.Players.First(p => p.name == currentUserName).tableBalance;
+
+                    if (raiseAmount > myBalance)
+                        raiseAmount = myBalance;
+                    else if (raiseAmount < gameState.MinRaise && myBalance > gameState.MinRaise)
+                        raiseAmount = gameState.MinRaise;
+
+                    hubConnection?.InvokeAsync("SendAction", currentUserName, Poker.Game.Table.Decision.Raise, raiseAmount);
+                }
+				OffButton(Button.Raise);
+				rising = false;
+				break;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
         var table = GameService.GetTable(JoinCode);
 
-        var currentUserName = HttpContextAccessor.HttpContext?.User?.Identity?.Name;
+        currentUserName = HttpContextAccessor.HttpContext?.User?.Identity?.Name;
         var playerTable = GameService.GetTableByPlayer(currentUserName);
 
         if (table == null 
@@ -114,6 +889,8 @@
             Navigation.NavigateTo($"/");
             return;
         }
+
+        plusMinusStep = table.buyIn / 100;
 
         var cookieContainer = new CookieContainer();
         var hubUrl = Navigation.ToAbsoluteUri("/pokerhub");
@@ -134,6 +911,7 @@
         hubConnection.On<GameStateDto>("UpdateState", (state) =>
         {
             gameState = state;
+            OffButton(Button.CheckCall);
             InvokeAsync(StateHasChanged);
         });
 

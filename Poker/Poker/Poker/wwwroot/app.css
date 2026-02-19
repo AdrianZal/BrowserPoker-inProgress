@@ -2,6 +2,7 @@
 
 html, body {
     font-family: 'Tiny5', system-ui;
+    background-color: gray;
 }
 
 * {
@@ -85,3 +86,269 @@ img {
         width: 48%;
         height: auto;
     }
+
+h1 {
+    font-size: 1.5vw;
+    margin: 0;
+    padding: 0;
+}
+
+.token-top-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 4%;
+    top: 22%;
+    right: 20%;
+}
+.token-mid-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 4%;
+    top: 52%;
+    right: 10%;
+}
+.token-bot-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 4%;
+    bottom: 18%;
+    right: 20%;
+}
+.token-mid {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 4%;
+    bottom: 11%;
+    left: 61%;
+    transform: translateX(-50%);
+}
+.token-bot-left {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 4%;
+    bottom: 18%;
+    left: 20%;
+}
+.token-mid-left {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 4%;
+    top: 52%;
+    left: 10%;
+}
+.token-top-left {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 4%;
+    top: 22%;
+    left: 20%;
+}
+
+.name-top-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top: 27%;
+    right: 11%;
+    transform: translate(50%, 50%);
+}
+.name-mid-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top: 57%;
+    right: 1%;
+    transform: translate(50%, 50%);
+}
+.name-bot-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 9%;
+    right: 11%;
+    transform: translate(50%, -50%);
+}
+.name-mid {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 6%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+.name-bot-left {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 9%;
+    left: 11%;
+    transform: translate(-50%, -50%);
+}
+.name-mid-left {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top: 57%;
+    left: 1%;
+    transform: translate(-50%, 50%);
+}
+.name-top-left {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top: 27%;
+    left: 11%;
+    transform: translate(-50%, 50%);
+}
+
+.winners {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    top: 8%;
+    right: 50%;
+    transform: translateX(50%);
+}
+    .winners h1 {
+        color: darkred;
+    }
+
+.balance {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+}
+    .balance h1{
+        color: yellow;
+    }
+
+.balance-top-right {
+    top: 30.5%;
+    right: 11%;
+    transform: translate(50%, 50%);
+}
+
+.balance-mid-right {
+    top: 60.5%;
+    right: 1%;
+    transform: translate(50%, 50%);
+}
+
+.balance-bot-right {
+    bottom: 5.5%;
+    right: 11%;
+    transform: translate(50%, -50%);
+}
+
+.balance-mid {
+    bottom: 2.5%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.balance-bot-left {
+    bottom: 5.5%;
+    left: 11%;
+    transform: translate(-50%, -50%);
+}
+
+.balance-mid-left {
+    top: 60.5%;
+    left: 1%;
+    transform: translate(-50%, 50%);
+}
+
+.balance-top-left {
+    top: 30.5%;
+    left: 11%;
+    transform: translate(-50%, 50%);
+}
+
+.bet h1 {
+    color: orange;
+}
+.bet-top-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top: 17%;
+    right: 21%;
+    text-align: left
+}
+.bet-mid-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top: 47%;
+    right: 11%;
+    text-align: left;
+}
+.bet-bot-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 23%;
+    right: 21%;
+    text-align: left;
+}
+.bet-mid {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 22%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.bet-bot-left {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 23%;
+    left: 21%;
+}
+.bet-mid-left {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top: 47%;
+    left: 11%;
+}
+.bet-top-left {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top: 17%;
+    left: 21%;
+}
+.start-button {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 12%;
+    transform: translateX(-50%);
+    left: 50%;
+    bottom: 45%;
+}
+    .start-button img {
+        width: 100%;
+        height: auto;
+    }
+
+.no-arrows::-webkit-outer-spin-button,
+.no-arrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.no-arrows {
+    -moz-appearance: textfield;
+}

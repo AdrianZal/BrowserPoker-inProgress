@@ -2,9 +2,11 @@
 
 public class Player
 {
-    public string name;
-    public List<Card> cards;
-    public int tableBalance;
+    public string name { get; set; }
+    public List<Card> cards { get; set; }
+    public int tableBalance { get; set; }
+
+    public Player() { }
 
     public Player(string name, int buyIn)
     {
