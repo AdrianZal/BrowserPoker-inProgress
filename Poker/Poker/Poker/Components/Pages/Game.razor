@@ -9,6 +9,7 @@
 @inject NavigationManager Navigation
 @inject IHttpContextAccessor HttpContextAccessor
 @inject GameService GameService
+@inject IJSRuntime JS
 
 <PageTitle>Game</PageTitle>
 
@@ -784,6 +785,7 @@ else
         switch (button)
         {
             case Button.Start:
+                JS.InvokeVoidAsync("playAudio", "sounds/click.mp3");
                 startButtonImage = "images/buttons/startClick.png";
                 if (gameState != null && gameState.Stage == Poker.Game.Table.GameStage.NotStarted)
                 {
@@ -791,6 +793,7 @@ else
                 }
                 break;
             case Button.CheckCall:
+                JS.InvokeVoidAsync("playAudio", "sounds/click.mp3");
                 if (gameState != null && gameState.Statuses.Count() != 0 && gameState.Statuses[currentUserName] == Poker.Game.Table.PlayerStatus.ToCall)
                 {
                     checkCallButtonImage = "images/buttons/callClick.png";
@@ -805,16 +808,18 @@ else
                 }
                 break;
             case Button.Raise:
+                JS.InvokeVoidAsync("playAudio", "sounds/click.mp3");
                 raiseButtonImage = "images/buttons/raiseClick.png";
                 if(gameState != null && gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == currentUserName)
                 {
-					raiseAmount = gameState.MinRaise;
+                    raiseAmount = gameState.MinRaise;
                     OffButton(Button.Cancel);
                     OffButton(Button.Ok);
                     rising = true;
                 }
                 break;
             case Button.Fold:
+                JS.InvokeVoidAsync("playAudio", "sounds/click.mp3");
                 foldButtonImage = "images/buttons/foldClick.png";
                 if (gameState != null && gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == currentUserName)
                 {
@@ -822,11 +827,13 @@ else
                 }
                 break;
             case Button.Cancel:
+                JS.InvokeVoidAsync("playAudio", "sounds/click.mp3");
                 cancelButtonImage = "images/buttons/cancelClick.png";
                 OffButton(Button.Raise);
                 rising = false;
                 break;
             case Button.Minus:
+                JS.InvokeVoidAsync("playAudio", "sounds/coinMinus.mp3");
                 minusButtonImage = "images/buttons/minusClick.png";
                 if (gameState != null)
                 {
@@ -841,6 +848,7 @@ else
                 }
                 break;
             case Button.Plus:
+                JS.InvokeVoidAsync("playAudio", "sounds/coinPlus.mp3");
                 plusButtonImage = "images/buttons/plusClick.png";
                 if (gameState != null)
                 {
@@ -856,22 +864,23 @@ else
                     }
                 }
                 break;
-			case Button.Ok:
-				okButtonImage = "images/buttons/okClick.png";
+            case Button.Ok:
+                JS.InvokeVoidAsync("playAudio", "sounds/click.mp3");
+                okButtonImage = "images/buttons/okClick.png";
                 if (gameState != null && gameState.CurrentPlayer != null && gameState.CurrentPlayer.name == currentUserName)
                 {
                     var myBalance = gameState.Players.First(p => p.name == currentUserName).tableBalance;
 
-                    if (raiseAmount > myBalance)
+                    if (raiseAmount + gameState.ToCall > myBalance)
                         raiseAmount = myBalance;
                     else if (raiseAmount < gameState.MinRaise && myBalance > gameState.MinRaise)
                         raiseAmount = gameState.MinRaise;
 
                     hubConnection?.InvokeAsync("SendAction", currentUserName, Poker.Game.Table.Decision.Raise, raiseAmount);
                 }
-				OffButton(Button.Raise);
-				rising = false;
-				break;
+                OffButton(Button.Raise);
+                rising = false;
+                break;
         }
     }
 
@@ -883,7 +892,7 @@ else
         var playerTable = GameService.GetTableByPlayer(currentUserName);
 
         if (table == null 
-            || (table.IsFull() && !table.players.Any(p => p.name == currentUserName)) 
+            || (table.IsFull() && !table.playersInGame.Any(p => p.name == currentUserName)) 
             || (playerTable != null && playerTable.joinCode != JoinCode))
         {
             Navigation.NavigateTo($"/");
@@ -920,6 +929,11 @@ else
             Console.WriteLine($"Player {playerName} joined table.");
         });
 
+        hubConnection.On<string>("PlayerLeft", (playerName) =>
+        {
+            Console.WriteLine($"Player {playerName} left table.");
+		});
+
         try
         {
             await hubConnection.StartAsync();
@@ -928,6 +942,8 @@ else
         catch (Exception ex)
         {
             Console.WriteLine($"SignalR Connection Error: {ex.Message}");
+            Navigation.NavigateTo($"/");
+            return;
         }
     }
 

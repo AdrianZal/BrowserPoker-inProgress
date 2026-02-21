@@ -50,12 +50,6 @@ namespace PokerServer.Hubs
                 await table.AddPlayer(player);
 
                 await Clients.Group(joinCode).SendAsync("PlayerJoined", player.name);
-
-                table.NotifyStateUpdate();
-            }
-            else
-            {
-                table.NotifyStateUpdate();
             }
         }
 
@@ -83,13 +77,16 @@ namespace PokerServer.Hubs
             {
                 playerInfo.Balance += tablePlayer.tableBalance;
 
-                table.RemovePlayer(tablePlayer);
+                await table.RemovePlayer(tablePlayer);
 
                 await context.SaveChangesAsync();
 
                 await Clients.Group(joinCode).SendAsync("PlayerLeft", tablePlayer.name);
 
-                table.NotifyStateUpdate();
+                if (table.players.Count == 0)
+                {
+                    gameService.RemoveTable(joinCode);
+                }
             }
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, joinCode);
@@ -112,11 +109,14 @@ namespace PokerServer.Hubs
                         if (tablePlayer != null)
                         {
                             playerInfo.Balance += tablePlayer.tableBalance;
-                            table.RemovePlayer(tablePlayer);
+                            await table.RemovePlayer(tablePlayer);
                             await context.SaveChangesAsync();
 
                             await Clients.Group(table.joinCode).SendAsync("PlayerLeft", tablePlayer.name);
-                            table.NotifyStateUpdate();
+                        }
+                        if (table.players.Count == 0)
+                        {
+                            gameService.RemoveTable(table.joinCode);
                         }
                     }
                 }
@@ -130,7 +130,7 @@ namespace PokerServer.Hubs
             var table = gameService.GetTableByPlayer(playerName);
             if (table == null) throw new HubException("Table not found.");
             table.PlayerAction(
-                table.players.First(p => p.name == playerName),
+                table.playersInGame.First(p => p.name == playerName),
                 decision,
                 amount
             );

@@ -33,4 +33,12 @@ public class GameService(IHubContext<PokerHub> hubContext)
         return _tables.Values.FirstOrDefault(table =>
             table.players.Any(p => p.name == playerName));
     }
+
+    public void RemoveTable(string code)
+    {
+        if (_tables.ContainsKey(code))
+        {
+            _tables.Remove(code);
+        }
+    }
 }
