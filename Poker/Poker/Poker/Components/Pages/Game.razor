@@ -15,8 +15,8 @@
 
 @if (gameState == null)
 {
-    <div style="text-align: center; margin-top: 50px;">
-        <h3>Loading table...</h3>
+    <div class="loading">
+        <h1>Loading table...</h1>
     </div>
 }
 else
@@ -185,7 +185,9 @@ else
                 @if (gameState.Players.Count > 0)
                 {
                     <div class="card-pair" style="top: 15%; right: 2%;">
-                        @if (gameState.Players[0].name == currentUserName && gameState.Players[0].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        @if (gameState.Players[0].name == currentUserName
+                                        && gameState.Players[0].cards.Count() == 2
+                                        || (gameState.Stage == Poker.Game.Table.GameStage.GameOver && gameState.Statuses.ElementAt(0).Value == Poker.Game.Table.PlayerStatus.Showing))
                         {
                             <img src="@($"images/cardFaces/default/{gameState.Players[0].cards[0].Value}{gameState.Players[0].cards[0].Suit}.png")" alt="card1" />
                             <img src="@($"images/cardFaces/default/{gameState.Players[0].cards[1].Value}{gameState.Players[0].cards[1].Suit}.png")" alt="card2" />
@@ -230,7 +232,9 @@ else
                 @if (gameState.Players.Count > 1)
                 {
                     <div class="card-pair" style="top: 45%; right: -8%;">
-                        @if (gameState.Players[1].name == currentUserName && gameState.Players[1].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        @if (gameState.Players[1].name == currentUserName
+                                        && gameState.Players[1].cards.Count() == 2
+                                        || (gameState.Stage == Poker.Game.Table.GameStage.GameOver && gameState.Statuses.ElementAt(1).Value == Poker.Game.Table.PlayerStatus.Showing))
                         {
                             <img src="@($"images/cardFaces/default/{gameState.Players[1].cards[0].Value}{gameState.Players[1].cards[0].Suit}.png")" alt="card1" />
                             <img src="@($"images/cardFaces/default/{gameState.Players[1].cards[1].Value}{gameState.Players[1].cards[1].Suit}.png")" alt="card2" />
@@ -275,7 +279,9 @@ else
                 @if (gameState.Players.Count > 2)
                 {
                     <div class="card-pair" style="bottom: 15%; right: 2%;">
-                        @if (gameState.Players[2].name == currentUserName && gameState.Players[2].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        @if (gameState.Players[2].name == currentUserName
+                                        && gameState.Players[2].cards.Count() == 2
+                                        || (gameState.Stage == Poker.Game.Table.GameStage.GameOver && gameState.Statuses.ElementAt(2).Value == Poker.Game.Table.PlayerStatus.Showing))
                         {
                             <img src="@($"images/cardFaces/default/{gameState.Players[2].cards[0].Value}{gameState.Players[2].cards[0].Suit}.png")" alt="card1" />
                             <img src="@($"images/cardFaces/default/{gameState.Players[2].cards[1].Value}{gameState.Players[2].cards[1].Suit}.png")" alt="card2" />
@@ -320,7 +326,9 @@ else
                 @if (gameState.Players.Count > 3)
                 {
                     <div class="card-pair" style="bottom: 8%; left: 50%; transform: translateX(-50%);">
-                        @if (gameState.Players[3].name == currentUserName && gameState.Players[3].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        @if (gameState.Players[3].name == currentUserName
+                                        && gameState.Players[3].cards.Count() == 2
+                                        || (gameState.Stage == Poker.Game.Table.GameStage.GameOver && gameState.Statuses.ElementAt(3).Value == Poker.Game.Table.PlayerStatus.Showing))
                         {
                             <img src="@($"images/cardFaces/default/{gameState.Players[3].cards[0].Value}{gameState.Players[3].cards[0].Suit}.png")" alt="card1" />
                             <img src="@($"images/cardFaces/default/{gameState.Players[3].cards[1].Value}{gameState.Players[3].cards[1].Suit}.png")" alt="card2" />
@@ -365,7 +373,9 @@ else
                 @if (gameState.Players.Count > 4)
                 {
                     <div class="card-pair" style="bottom: 15%; left: 2%;">
-                        @if (gameState.Players[4].name == currentUserName && gameState.Players[4].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        @if (gameState.Players[4].name == currentUserName
+                                        && gameState.Players[4].cards.Count() == 2
+                                        || (gameState.Stage == Poker.Game.Table.GameStage.GameOver && gameState.Statuses.ElementAt(4).Value == Poker.Game.Table.PlayerStatus.Showing))
                         {
                             <img src="@($"images/cardFaces/default/{gameState.Players[4].cards[0].Value}{gameState.Players[4].cards[0].Suit}.png")" alt="card1" />
                             <img src="@($"images/cardFaces/default/{gameState.Players[4].cards[1].Value}{gameState.Players[4].cards[1].Suit}.png")" alt="card2" />
@@ -410,7 +420,9 @@ else
                 @if (gameState.Players.Count > 5)
                 {
                     <div class="card-pair" style="top: 45%; left: -8%;">
-                        @if (gameState.Players[5].name == currentUserName && gameState.Players[5].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        @if (gameState.Players[5].name == currentUserName
+                                        && gameState.Players[5].cards.Count() == 2
+                                        || (gameState.Stage == Poker.Game.Table.GameStage.GameOver && gameState.Statuses.ElementAt(5).Value == Poker.Game.Table.PlayerStatus.Showing))
                         {
                             <img src="@($"images/cardFaces/default/{gameState.Players[5].cards[0].Value}{gameState.Players[5].cards[0].Suit}.png")" alt="card1" />
                             <img src="@($"images/cardFaces/default/{gameState.Players[5].cards[1].Value}{gameState.Players[5].cards[1].Suit}.png")" alt="card2" />
@@ -455,7 +467,9 @@ else
                 @if (gameState.Players.Count > 6)
                 {
                     <div class="card-pair" style="top: 15%; left: 2%;">
-                        @if (gameState.Players[6].name == currentUserName && gameState.Players[6].cards.Count() == 2 || gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                        @if (gameState.Players[6].name == currentUserName
+                                        && gameState.Players[6].cards.Count() == 2
+                                        || (gameState.Stage == Poker.Game.Table.GameStage.GameOver && gameState.Statuses.ElementAt(6).Value == Poker.Game.Table.PlayerStatus.Showing))
                         {
                             <img src="@($"images/cardFaces/default/{gameState.Players[6].cards[0].Value}{gameState.Players[6].cards[0].Suit}.png")" alt="card1" />
                             <img src="@($"images/cardFaces/default/{gameState.Players[6].cards[1].Value}{gameState.Players[6].cards[1].Suit}.png")" alt="card2" />
@@ -507,10 +521,11 @@ else
                 else
                 {
                     <div class="winners">
-                    @foreach(var winner in gameState.HandWinners)
-                    {
-                        <h1>@winner.Key: @winner.Value</h1>
-					}
+                        <h1 style="color: cyan">@gameState.WinningHand</h1>
+                        @foreach(var winner in gameState.HandWinners)
+                        {
+                            <h1 style="color: gold">@winner.Key: @winner.Value</h1>
+					    }
                     </div>
                 }
                
@@ -574,7 +589,17 @@ else
                 </div>
             }
 
-            @if (!rising)
+            @if (gameState != null && gameState.Stage == Poker.Game.Table.GameStage.GameOver && gameState.Statuses[currentUserName] == Poker.Game.Table.PlayerStatus.Folded)
+            {
+            <div style="display:flex; justify-content:center; gap:1%; margin-top:20px;">
+                <img src=@showButtonImage alt="Show" style="width:8%; height:auto;"
+                     @onmouseout="() => OffButton(Button.Show)"
+                     @onmouseover="() => OverButton(Button.Show)"
+                     @onmousedown="() => ClickButton(Button.Show)"
+                     @onmouseup="() => OverButton(Button.Show)">
+            </div>
+            }
+            else if (!rising)
             {
                 <div style="display:flex; justify-content:center; gap:1%; margin-top:20px;">
                     <img src=@checkCallButtonImage alt="CheckCall" style="width:8%; height:auto;"
@@ -647,6 +672,7 @@ else
     private HubConnection? hubConnection;
     private GameStateDto? gameState;
     private string currentUserName;
+    private string whoseTurn = string.Empty;
 
     private bool rising = false;
     private int _raiseAmount = 0;
@@ -692,6 +718,8 @@ else
     private string plusButtonImage = "images/buttons/plusOff.png";
     private string okButtonImage = "images/buttons/okOff.png";
 
+    private string showButtonImage = "images/buttons/showOff.png";
+
     private enum Button
     {
         Start,
@@ -701,7 +729,8 @@ else
         Cancel,
         Minus,
         Plus,
-        Ok
+        Ok,
+        Show
     }
 
     private void OffButton(Button button)
@@ -739,6 +768,9 @@ else
             case Button.Ok:
                 okButtonImage = "images/buttons/okOff.png";
                 break;
+            case Button.Show:
+                showButtonImage = "images/buttons/showOff.png";
+				break;
         }
     }
 
@@ -777,6 +809,9 @@ else
             case Button.Ok:
                 okButtonImage = "images/buttons/okOn.png";
                 break;
+			case Button.Show:
+                showButtonImage = "images/buttons/showOn.png";
+				break;
         }
     }
 
@@ -881,6 +916,14 @@ else
                 OffButton(Button.Raise);
                 rising = false;
                 break;
+			case Button.Show:
+            JS.InvokeVoidAsync("playAudio", "sounds/click.mp3");
+                showButtonImage = "images/buttons/showClick.png";
+                if (gameState != null && gameState.Stage == Poker.Game.Table.GameStage.GameOver)
+                {
+                    hubConnection?.InvokeAsync("SendAction", currentUserName, Poker.Game.Table.Decision.Show, 0);
+                }
+				break;
         }
     }
 
@@ -920,7 +963,32 @@ else
         hubConnection.On<GameStateDto>("UpdateState", (state) =>
         {
             gameState = state;
+            if (gameState.CurrentPlayer != null)
+            {
+                if (gameState.CurrentPlayer.name != whoseTurn)
+                {
+                    if (currentUserName == gameState.CurrentPlayer.name)
+                    {
+						JS.InvokeVoidAsync("playAudio", "sounds/yourTurn.mp3");
+                    }
+                    else if(whoseTurn != currentUserName)
+                    {
+                        JS.InvokeVoidAsync("playAudio", "sounds/nextPlayer.mp3");
+					}
+                }
+                whoseTurn = gameState.CurrentPlayer.name;
+            }
+            else {
+                whoseTurn = string.Empty;
+			}
             OffButton(Button.CheckCall);
+            OffButton(Button.Raise);
+            OffButton(Button.Fold);
+            OffButton(Button.Show);
+            OffButton(Button.Cancel);
+            OffButton(Button.Minus);
+            OffButton(Button.Plus);
+            OffButton(Button.Ok);
             InvokeAsync(StateHasChanged);
         });
 

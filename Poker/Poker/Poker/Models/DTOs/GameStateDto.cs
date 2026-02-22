@@ -11,6 +11,7 @@
         public int MinRaise { get; set; }
         public Game.Player? CurrentPlayer { get; set; }
         public Dictionary<string, int> HandWinners { get; set; } = new();
+        public string WinningHand { get; set; } = string.Empty;
         public Dictionary<string, Game.Table.PlayerRole> Roles { get; set; } = new();
         public Dictionary<string, Game.Table.PlayerStatus> Statuses { get; set; } = new();
     }

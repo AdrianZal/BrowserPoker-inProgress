@@ -19,13 +19,15 @@ public class Table
         ToCall,
         ToCheck,
         Checked,
-        AllIn
+        AllIn,
+        Showing
     }
     public enum Decision
     {
         Fold,
         Call,
-        Raise
+        Raise,
+        Show
     }
     public enum GameStage 
     { 
@@ -35,7 +37,6 @@ public class Table
         Flop, 
         Turn, 
         River, 
-        Showdown, 
         GameOver 
     }
 
@@ -59,11 +60,13 @@ public class Table
     private int bigBlindIndex;
     private int minRaise;
     private int toCall;
+    private bool restartingHand = false;
     Dictionary<Player, int> roundBets = new();
     Dictionary<Player, int> handBets = new();
     Dictionary<Player, PlayerRole> playerRoles = new();
     Dictionary<Player, PlayerStatus> playerStatuses = new();
     Dictionary<Player, int> handWinners = new();
+    private string winningHandDescription = string.Empty;
 
     public Table(int buyIn, string joinCode)
     {
@@ -91,6 +94,7 @@ public class Table
             playerStatuses.Clear();
             handWinners.Clear();
             CurrentPlayer = null;
+            winningHandDescription = string.Empty;
             foreach (var p in playersInGame)
             {
                 p.cards.Clear();
@@ -110,10 +114,9 @@ public class Table
         NotifyStateUpdate();
     }
 
-    // This is the method the SignalR Hub will call
     public void PlayerAction(Player player, Decision decision, int amount = 0)
     {
-        if (player != CurrentPlayer)
+        if (player != CurrentPlayer && decision != Decision.Show)
         {
             OnGameMessage?.Invoke("It is not your turn.");
             return;
@@ -121,18 +124,35 @@ public class Table
 
         ProcessDecision(player, decision, amount);
 
-        AdvanceGame();
-        if (CurrentStage == GameStage.GameOver)
+        if (decision != Decision.Show)
         {
-            Thread.Sleep(5000);
-            PlayHand();
+            AdvanceGame();
+            if (CurrentStage == GameStage.GameOver)
+            {
+                restartingHand = true;
+                _ = DelayAndPlayHand();
+            }
         }
+        NotifyStateUpdate();
+    }
+
+    private async Task DelayAndPlayHand()
+    {
+        await Task.Delay(5000);
+        restartingHand = false;
+        PlayHand();
     }
 
     private void ProcessDecision(Player player, Decision decision, int amount)
     {
         switch (decision)
         {
+            case Decision.Show:
+                if (playerStatuses[player] == PlayerStatus.Folded)
+                {
+                    playerStatuses[player] = PlayerStatus.Showing;
+                }
+                break;
             case Decision.Fold:
                 playerStatuses[player] = PlayerStatus.Folded;
                 break;
@@ -150,7 +170,6 @@ public class Table
                 }
                 break;
             case Decision.Raise:
-                int raiseAmount = Math.Abs(amount - toCall);
 
                 if (amount > player.tableBalance)
                 {
@@ -158,7 +177,7 @@ public class Table
                     break;
                 }
 
-                if (raiseAmount < minRaise && amount == player.tableBalance)
+                if (amount < minRaise && amount == player.tableBalance)
                 {
                     HandleBet(player, amount);
                     toCall = roundBets.Values.Max();
@@ -166,8 +185,15 @@ public class Table
                     break;
                 }
 
-                minRaise = raiseAmount;
-                HandleBet(player, amount+toCall);
+                minRaise = amount;
+                if (playerStatuses[player] == PlayerStatus.ToCall)
+                {
+                    HandleBet(player, amount + (toCall - roundBets[player]));
+                }
+                else
+                {
+                    HandleBet(player, amount);
+                }
                 toCall = roundBets.Values.Max();
 
                 if (player.tableBalance == 0)
@@ -276,7 +302,8 @@ public class Table
             CurrentPlayer = CurrentPlayer,
             Roles = playerRoles.ToDictionary(k => k.Key.name, v => v.Value),
             Statuses = playerStatuses.ToDictionary(k => k.Key.name, v => v.Value),
-            HandWinners = handWinners.ToDictionary(k => k.Key.name, v => v.Value)
+            HandWinners = handWinners.ToDictionary(k => k.Key.name, v => v.Value),
+            WinningHand = winningHandDescription
         };
         OnGameStateChanged?.Invoke(dto);
     }
@@ -292,7 +319,9 @@ public class Table
     {
         Dictionary<Player, int> winningsByPlayer = new();
         Dictionary<Player, int> playerScores = playersInGame.Where(p => playerStatuses[p] != PlayerStatus.Folded).ToDictionary(p => p, CheckScore);
-        
+
+        int maxScore = playerScores.Values.Max();
+
         var levels = handBets.Values.Where(v => v > 0).Distinct().OrderBy(v => v).ToList();
         int prev = 0;
 
@@ -337,6 +366,16 @@ public class Table
             
             prev = level;
         }
+
+        foreach (var p in playersInGame)
+        {
+            if (playerStatuses[p] != PlayerStatus.Folded)
+            {
+                playerStatuses[p] = PlayerStatus.Showing;
+            }
+        }
+
+        winningHandDescription = WhatHand(maxScore);
 
         return winningsByPlayer;
     }
