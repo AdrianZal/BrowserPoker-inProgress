@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Poker.Models;
 
 
@@ -15,6 +16,15 @@ namespace PokerServer.Hubs
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int playerId))
             {
                 throw new HubException("User identity not found.");
+            }
+
+            var userEquippedSkin = await context.PlayerEquippedReverseSkins
+                .Where(x => x.PlayerId == playerId)
+                .Select(x => x.PlayerOwnedReverseSkin.Skin.Filename)
+                .FirstOrDefaultAsync();
+            if (userEquippedSkin == null) 
+            {
+                throw new HubException("Equipped skin not found.");
             }
 
             var playerInfo = await context.Players.FindAsync(playerId);
@@ -44,12 +54,15 @@ namespace PokerServer.Hubs
                     await Groups.RemoveFromGroupAsync(Context.ConnectionId, joinCode);
                     throw new HubException("Transaction failed.");
                 }
-
-                var player = new Poker.Game.Player(playerInfo.Name, table.buyIn);
+                var player = new Poker.Game.Player(playerInfo.Name, table.buyIn, userEquippedSkin);
 
                 await table.AddPlayer(player);
 
                 await Clients.Group(joinCode).SendAsync("PlayerJoined", player.name);
+            }
+            else
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, joinCode);
             }
         }
 

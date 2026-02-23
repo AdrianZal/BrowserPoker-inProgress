@@ -38,6 +38,10 @@
                 }
             </div>
             
+            <button class="btn btn-primary fs-5 py-2" @onclick="() => HandleGoToMySkins()">
+                My Skins
+            </button>
+
             <form method="post" action="api/auth/logout">
                 <AntiforgeryToken />
                 <button type="submit" class="btn btn-outline-danger w-100 fs-5 py-2">
@@ -91,5 +95,10 @@
         }
 
         joinCode = numericOnly;
+    }
+
+    private void HandleGoToMySkins()
+    {
+        Navigation.NavigateTo("/myskins");
     }
 }

@@ -5,7 +5,7 @@ namespace Shared.Models.DTOs
     public class LoginRequestDto
     {
         [Required(ErrorMessage = "Name is required.")]
-        [MaxLength(30, ErrorMessage = "Name cannot exceed 30 characters.")]
+        [MaxLength(16, ErrorMessage = "Name cannot exceed 16 characters.")]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Password is required.")]

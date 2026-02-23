@@ -70,6 +70,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<SkinService>();
 
 builder.Services.AddScoped(sp => new HttpClient
 {

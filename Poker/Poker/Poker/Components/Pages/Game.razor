@@ -194,8 +194,8 @@ else
                         }
                         else if (gameState.Players[0].cards.Count() == 2)
                         {
-                            <img src="images/cardReverses/default.png" alt="card1" />
-                            <img src="images/cardReverses/default.png" alt="card2" />
+                            <img src="@($"images/cardReverses/{gameState.Players[0].skinFilename}")" alt="card1" />
+                            <img src="@($"images/cardReverses/{gameState.Players[0].skinFilename}")" alt="card2" />
                         }
                     </div>
                     <div class="name-top-right">
@@ -241,8 +241,8 @@ else
                         }
                         else if (gameState.Players[1].cards.Count() == 2)
                         {
-                            <img src="images/cardReverses/default.png" alt="card1" />
-                            <img src="images/cardReverses/default.png" alt="card2" />
+                            <img src="@($"images/cardReverses/{gameState.Players[1].skinFilename}")" alt="card1" />
+                            <img src="@($"images/cardReverses/{gameState.Players[1].skinFilename}")" alt="card2" />
                         }
                     </div>
                     <div class="name-mid-right">
@@ -288,8 +288,8 @@ else
                         }
                         else if (gameState.Players[2].cards.Count() == 2)
                         {
-                            <img src="images/cardReverses/default.png" alt="card1" />
-                            <img src="images/cardReverses/default.png" alt="card2" />
+                            <img src="@($"images/cardReverses/{gameState.Players[2].skinFilename}")" alt="card1" />
+                            <img src="@($"images/cardReverses/{gameState.Players[2].skinFilename}")" alt="card2" />
                         }
                     </div>
                     <div class="name-bot-right">
@@ -335,8 +335,8 @@ else
                         }
                         else if (gameState.Players[3].cards.Count() == 2)
                         {
-                            <img src="images/cardReverses/default.png" alt="card1" />
-                            <img src="images/cardReverses/default.png" alt="card2" />
+                            <img src="@($"images/cardReverses/{gameState.Players[3].skinFilename}")" alt="card1" />
+                            <img src="@($"images/cardReverses/{gameState.Players[3].skinFilename}")" alt="card2" />
                         }
                     </div>
                     <div class="name-mid">
@@ -382,8 +382,8 @@ else
                         }
                         else if (gameState.Players[4].cards.Count() == 2)
                         {
-                            <img src="images/cardReverses/default.png" alt="card1" />
-                            <img src="images/cardReverses/default.png" alt="card2" />
+                            <img src="@($"images/cardReverses/{gameState.Players[4].skinFilename}")" alt="card1" />
+                            <img src="@($"images/cardReverses/{gameState.Players[4].skinFilename}")" alt="card2" />
                         }
                     </div>
                     <div class="name-bot-left">
@@ -429,8 +429,8 @@ else
                         }
                         else if (gameState.Players[5].cards.Count() == 2)
                         {
-                            <img src="images/cardReverses/default.png" alt="card1" />
-                            <img src="images/cardReverses/default.png" alt="card2" />
+                            <img src="@($"images/cardReverses/{gameState.Players[5].skinFilename}")" alt="card1" />
+                            <img src="@($"images/cardReverses/{gameState.Players[5].skinFilename}")" alt="card2" />
                         }
                     </div>
                     <div class="name-mid-left">
@@ -476,8 +476,8 @@ else
                         }
                         else if (gameState.Players[6].cards.Count() == 2)
                         {
-                            <img src="images/cardReverses/default.png" alt="card1" />
-                            <img src="images/cardReverses/default.png" alt="card2" />
+                            <img src="@($"images/cardReverses/{gameState.Players[6].skinFilename}")" alt="card1" />
+                            <img src="@($"images/cardReverses/{gameState.Players[6].skinFilename}")" alt="card2" />
                         }
                     </div>
                     <div class="name-top-left">
@@ -688,9 +688,9 @@ else
                 {
                     int myBalance = myPlayer.tableBalance;
 
-                    if (value > myBalance)
+                    if (value > myBalance - (gameState.ToCall - gameState.PlayerBets[currentUserName]))
                     {
-                        _raiseAmount = myBalance;
+                        _raiseAmount = myBalance - (gameState.ToCall - gameState.PlayerBets[currentUserName]);
                     }
                     else if (value < gameState.MinRaise && myBalance > gameState.MinRaise)
                     {
@@ -981,6 +981,7 @@ else
             else {
                 whoseTurn = string.Empty;
 			}
+			OffButton(Button.Start);
             OffButton(Button.CheckCall);
             OffButton(Button.Raise);
             OffButton(Button.Fold);

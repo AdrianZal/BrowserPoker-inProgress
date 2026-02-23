@@ -58,7 +58,7 @@ namespace Poker.Services
                 Name = request.Name,
                 Email = request.Email,
                 Password = hashedPassword,
-                Balance = 5000
+                Balance = 10000
             };
 
             context.Players.Add(player);

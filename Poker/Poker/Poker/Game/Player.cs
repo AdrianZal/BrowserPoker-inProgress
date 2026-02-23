@@ -6,13 +6,16 @@ public class Player
     public List<Card> cards { get; set; }
     public int tableBalance { get; set; }
 
+    public string skinFilename { get; set; }
+
     public Player() { }
 
-    public Player(string name, int buyIn)
+    public Player(string name, int buyIn, string skin)
     {
         this.name = name;
         cards = new List<Card>(2);
         tableBalance = buyIn;
+        this.skinFilename = skin;
     }
 
     public void SeeCards()

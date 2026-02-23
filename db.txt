@@ -28,9 +28,9 @@ CREATE TABLE CardReverseSkin (
 -- Table: Player
 CREATE TABLE Player (
     id int IDENTITY(1,1) NOT NULL,
-    name varchar(30)  NOT NULL,
+    name varchar(16)  NOT NULL,
     email varchar(255) NOT NULL,
-    password varchar(450) NOT NULL,
+    password_hash varchar(450) NOT NULL,
     balance int  NOT NULL,
     CONSTRAINT Player_pk PRIMARY KEY  (id),
     CONSTRAINT UQ_Player_Name UNIQUE (name),
@@ -83,9 +83,9 @@ CREATE TABLE "Table" (
 
 -- Table: RefreshToken
 CREATE TABLE RefreshToken (
-    id int  NOT NULL,
+    id int IDENTITY(1,1) NOT NULL,
     Player_id int  NOT NULL,
-    token_hash varchar(256)  NOT NULL,
+    token_hash varchar(450) NOT NULL,
     expires_at datetime  NOT NULL,
     revoked bit  NOT NULL,
     CONSTRAINT RefreshToken_pk PRIMARY KEY  (id)
@@ -184,12 +184,6 @@ AFTER INSERT
 AS
 BEGIN
     SET NOCOUNT ON;
-
-    UPDATE p
-    SET balance = 1000
-    FROM Player AS p
-    JOIN inserted AS i
-    ON p.id = i.id;
 
 	INSERT INTO PlayerOwnedReverseSkin (Player_id, Skin_id)
     SELECT

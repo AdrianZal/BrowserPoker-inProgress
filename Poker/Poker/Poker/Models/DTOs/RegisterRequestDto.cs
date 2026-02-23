@@ -6,7 +6,7 @@ namespace Shared.Models.DTOs
     {
         [Required(ErrorMessage = "Name is required.")]
         [MinLength(3, ErrorMessage = "Name must be at least 3 characters long.")]
-        [MaxLength(30, ErrorMessage = "Name cannot exceed 30 characters.")]
+        [MaxLength(16, ErrorMessage = "Name cannot exceed 16 characters.")]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email is required.")]

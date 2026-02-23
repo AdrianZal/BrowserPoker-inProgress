@@ -88,7 +88,6 @@ public class Table
         {
             cards.Clear();
             handBets.Clear();
-            handBets.Clear();
             roundBets.Clear();
             playerRoles.Clear();
             playerStatuses.Clear();
@@ -185,8 +184,16 @@ public class Table
                     break;
                 }
 
-                minRaise = amount;
-                if (playerStatuses[player] == PlayerStatus.ToCall)
+                if(amount > minRaise)
+                {
+                    minRaise = amount;
+                }
+
+                if (playerStatuses[player] == PlayerStatus.ToCall && amount + (toCall - roundBets[player]) >= player.tableBalance)
+                {
+                    HandleBet(player, player.tableBalance);
+                }
+                else if (playerStatuses[player] == PlayerStatus.ToCall)
                 {
                     HandleBet(player, amount + (toCall - roundBets[player]));
                 }
@@ -224,13 +231,15 @@ public class Table
 
         if (IsBettingRoundComplete())
         {
-            NextStage();
+            do
+            {
+                NextStage();
+                NotifyStateUpdate();
+            } while ((!someoneCanAct() || oneMustCheck()) && CurrentStage != GameStage.GameOver);
         }
         else
         {
-            bool someoneCanAct = playerStatuses.Any(s => s.Value != PlayerStatus.Folded && s.Value != PlayerStatus.AllIn);
-
-            if (!someoneCanAct)
+            if (!someoneCanAct())
             {
                 NextStage();
                 return;
@@ -245,6 +254,14 @@ public class Table
         NotifyStateUpdate();
     }
 
+    private bool someoneCanAct() 
+    {
+        return playerStatuses.Any(s => s.Value != PlayerStatus.Folded && s.Value != PlayerStatus.AllIn); 
+    }
+    private bool oneMustCheck()
+    {
+        return playerStatuses.Count(s => s.Value == PlayerStatus.ToCheck) == 1;
+    }
     private bool IsBettingRoundComplete()
     {
         return playerStatuses.Count(s => s.Value == PlayerStatus.ToCall || s.Value == PlayerStatus.ToCheck) == 0;
@@ -278,8 +295,9 @@ public class Table
             _currentPlayerIndex = playersInGame.Count == 2 ? bigBlindIndex : smallBlindIndex;
             CurrentPlayer = playersInGame[_currentPlayerIndex];
 
-            while (playerStatuses[CurrentPlayer] == PlayerStatus.Folded
+            while ((playerStatuses[CurrentPlayer] == PlayerStatus.Folded
                 || playerStatuses[CurrentPlayer] == PlayerStatus.AllIn)
+                && someoneCanAct())
             {
                 _currentPlayerIndex = NextIndex(_currentPlayerIndex);
                 CurrentPlayer = playersInGame[_currentPlayerIndex];
@@ -367,11 +385,24 @@ public class Table
             prev = level;
         }
 
-        foreach (var p in playersInGame)
+        if (playerScores.Count() >= 2)
         {
-            if (playerStatuses[p] != PlayerStatus.Folded)
+            foreach (var p in playersInGame)
             {
-                playerStatuses[p] = PlayerStatus.Showing;
+                if (playerStatuses[p] != PlayerStatus.Folded)
+                {
+                    playerStatuses[p] = PlayerStatus.Showing;
+                }
+            }
+        }
+        else
+        {
+            foreach (var p in playersInGame)
+            {
+                if (playerStatuses[p] != PlayerStatus.Folded)
+                {
+                    playerStatuses[p] = PlayerStatus.Folded;
+                }
             }
         }
 

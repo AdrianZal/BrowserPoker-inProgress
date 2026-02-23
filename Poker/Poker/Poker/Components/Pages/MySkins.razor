@@ -1,0 +1,64 @@
+﻿@page "/myskins"
+@using Microsoft.AspNetCore.Authorization
+@using Poker.Models.DTOs
+@using Poker.Services
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IHttpContextAccessor HttpContextAccessor
+@inject SkinService SkinService
+@inject NavigationManager Navigation
+
+<PageTitle>My Skins</PageTitle>
+
+@if (skins == null)
+{
+    <div class="loading">
+        <h1>Loading skins...</h1>
+    </div>
+}
+else
+{
+    <div class="skins-container">
+        @foreach (var skin in skins.Skins)
+        {
+            <div class="skin-card">
+                <img src="@($"images/cardReverses/{skin.Key}")" alt="skin" />
+
+                @if (skin.Value)
+                {
+                    <button class="equip-button" disabled>Equipped</button>
+                }
+                else
+                {
+                    <button class="equip-button" @onclick="() => HandleEquip(skin.Key)">
+                        Equip
+                    </button>
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private string currentUserName;
+    OwnedSkinsDTO? skins;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUserName = HttpContextAccessor.HttpContext?.User?.Identity?.Name;
+
+        if (string.IsNullOrEmpty(currentUserName))
+        {
+			Navigation.NavigateTo("/menu");
+            return;
+		}
+        skins = await SkinService.GetOwnedSkinsAsync(currentUserName);
+    }
+
+    private async Task HandleEquip(string fileName)
+    {
+        await SkinService.ChangeEquippedSkinAsync(currentUserName, fileName);
+
+        skins = await SkinService.GetOwnedSkinsAsync(currentUserName);
+    }
+}
