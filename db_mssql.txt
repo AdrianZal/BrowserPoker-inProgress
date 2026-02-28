@@ -1,3 +1,8 @@
+-- Created by Vertabelo (http://vertabelo.com)
+-- Last modification date: 2025-09-20 17:36:17.882
+
+-- tables
+-- Table: Card
 CREATE TABLE Card (
     card varchar(3)  NOT NULL,
     CONSTRAINT Card_pk PRIMARY KEY  (card)
@@ -142,3 +147,120 @@ ALTER TABLE RefreshToken ADD CONSTRAINT RefreshToken_Player
     FOREIGN KEY (Player_id)
     REFERENCES Player (id);
 
+
+-- End of file.
+
+INSERT INTO CardReverseSkin (name, filename) 
+VALUES ('default', 'default.png');
+
+WITH Ranks AS (
+    SELECT 2 AS Rank UNION ALL
+    SELECT 3 UNION ALL
+    SELECT 4 UNION ALL
+    SELECT 5 UNION ALL
+    SELECT 6 UNION ALL
+    SELECT 7 UNION ALL
+    SELECT 8 UNION ALL
+    SELECT 9 UNION ALL
+    SELECT 10 UNION ALL
+    SELECT 11 UNION ALL
+    SELECT 12 UNION ALL
+    SELECT 13 UNION ALL
+    SELECT 14
+),
+Suits AS (
+    SELECT 's' AS Suit UNION ALL
+    SELECT 'c' UNION ALL
+    SELECT 'd' UNION ALL
+    SELECT 'h'
+)
+INSERT INTO Card (Card)
+SELECT CAST(Rank AS VARCHAR(2)) + Suit
+FROM Suits
+CROSS JOIN Ranks;
+
+
+WITH Ranks AS (
+    SELECT 2 AS Rank UNION ALL
+    SELECT 3 UNION ALL
+    SELECT 4 UNION ALL
+    SELECT 5 UNION ALL
+    SELECT 6 UNION ALL
+    SELECT 7 UNION ALL
+    SELECT 8 UNION ALL
+    SELECT 9 UNION ALL
+    SELECT 10 UNION ALL
+    SELECT 11 UNION ALL
+    SELECT 12 UNION ALL
+    SELECT 13 UNION ALL
+    SELECT 14
+),
+Suits AS (
+    SELECT 's' AS Suit UNION ALL
+    SELECT 'c' UNION ALL
+    SELECT 'd' UNION ALL
+    SELECT 'h'
+)
+INSERT INTO CardFrontSkin (name, filename, card)
+SELECT 
+    'default_' + CAST(Ranks.Rank AS VARCHAR(2)) + Suits.Suit AS name,
+    'default/' + CAST(Ranks.Rank AS VARCHAR(2)) + Suits.Suit + '.png' AS filename,
+    CAST(Ranks.Rank AS VARCHAR(2)) + Suits.Suit AS card
+FROM Suits
+CROSS JOIN Ranks;
+
+CREATE TRIGGER tr_Player_Insert_AddDefaultSkins
+ON Player
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+	INSERT INTO PlayerOwnedReverseSkin (Player_id, Skin_id)
+    SELECT
+        i.id AS Player_id,
+        crs.id AS Skin_id
+    FROM inserted AS i
+    CROSS JOIN CardReverseSkin AS crs
+    WHERE crs.name LIKE 'default%';
+
+    INSERT INTO PlayerEquippedReverseSkin (Player_id, Skin_id)
+    SELECT
+        i.id AS Player_id,
+        crs.id AS Skin_id
+    FROM inserted AS i
+    CROSS JOIN CardReverseSkin AS crs
+    WHERE crs.name LIKE 'default%';
+
+    INSERT INTO PlayerOwnedFaceSkin (Player_id, Skin_id)
+    SELECT 
+        i.id AS Player_id,
+        cfs.id AS Skin_id
+    FROM inserted AS i
+    CROSS JOIN CardFrontSkin AS cfs
+    WHERE cfs.name LIKE 'default%';
+
+    INSERT INTO PlayerEquippedFaceSkin (Player_id, card, Skin_id)
+    SELECT 
+        i.id AS Player_id,
+        cfs.card AS card,
+        cfs.id AS Skin_id
+    FROM inserted AS i
+    CROSS JOIN CardFrontSkin AS cfs
+    WHERE cfs.name LIKE 'default%';
+
+END;
+GO
+
+INSERT INTO Player (name, email, balance, password) 
+VALUES ('TestUser', 'testuser@example.com', 10000, 'test_password_hash');
+
+
+SELECT * FROM Player WHERE name = 'TestUser';
+select * from CardFrontSkin
+SELECT * FROM PlayerOwnedFaceSkin;
+SELECT * FROM PlayerEquippedFaceSkin;
+
+select * from CardReverseSkin
+SELECT * FROM PlayerOwnedReverseSkin;
+SELECT * FROM PlayerEquippedReverseSkin;

@@ -72,6 +72,9 @@ img {
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
 }
 
 .card-pair {
@@ -86,6 +89,36 @@ img {
         width: 48%;
         height: auto;
     }
+
+.card-pair-top-right {
+    top: 15%;
+    right: 2%;
+}
+.card-pair-mid-right {
+    top: 45%;
+    right: -8%;
+}
+.card-pair-bot-right {
+    bottom: 15%;
+    right: 2%;
+}
+.card-pair-mid {
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.card-pair-bot-left {
+    bottom: 15%;
+    left: 2%;
+}
+.card-pair-mid-left {
+    top: 45%;
+    left: -8%;
+}
+.card-pair-top-left {
+    top: 15%;
+    left: 2%;
+}
 
 h1 {
     font-size: 1.5vw;
@@ -150,7 +183,6 @@ h1 {
     top: 22%;
     left: 20%;
 }
-
 .name-top-right {
     position: absolute;
     display: flex;
@@ -410,4 +442,28 @@ h1 {
         background-color: #6c757d;
         cursor: not-allowed;
     }
-    
+
+.balance-container {
+    container-type: inline-size;
+}
+
+    .balance-container h1 {
+        font-size: 10cqw;
+    }
+
+.hide-button {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 6%;
+    top: 10px;
+    left: 10px;
+    margin: 0;
+    padding: 0;
+}
+    .hide-button img {
+        width: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0;
+    }

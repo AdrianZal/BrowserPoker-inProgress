@@ -5,7 +5,7 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 @inject IHttpContextAccessor HttpContextAccessor
-@inject SkinService SkinService
+@inject UtilService UtilService
 @inject NavigationManager Navigation
 
 <PageTitle>My Skins</PageTitle>
@@ -52,13 +52,13 @@ else
 			Navigation.NavigateTo("/menu");
             return;
 		}
-        skins = await SkinService.GetOwnedSkinsAsync(currentUserName);
+        skins = await UtilService.GetOwnedSkinsAsync(currentUserName);
     }
 
     private async Task HandleEquip(string fileName)
     {
-        await SkinService.ChangeEquippedSkinAsync(currentUserName, fileName);
+        await UtilService.ChangeEquippedSkinAsync(currentUserName, fileName);
 
-        skins = await SkinService.GetOwnedSkinsAsync(currentUserName);
+        skins = await UtilService.GetOwnedSkinsAsync(currentUserName);
     }
 }

@@ -4,7 +4,7 @@ using Poker.Models.DTOs;
 
 namespace Poker.Services
 {
-    public class SkinService(PokerContext context)
+    public class UtilService(PokerContext context)
     {
         public async Task<OwnedSkinsDTO> GetOwnedSkinsAsync(string playerName)
         {
@@ -57,5 +57,14 @@ namespace Poker.Services
             await context.SaveChangesAsync();
         }
 
+        public async Task<int> GetBalanceAsync(string playerName)
+        {
+            var playerBalance = await context.Players
+                .Where(p => p.Name == playerName)
+                .Select(p => p.Balance)
+                .FirstOrDefaultAsync();
+
+            return playerBalance;
+        }
     }
 }

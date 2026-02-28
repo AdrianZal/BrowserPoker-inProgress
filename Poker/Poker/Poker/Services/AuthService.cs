@@ -78,7 +78,7 @@ namespace Poker.Services
 
         public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto request)
         {
-            var player = await ValidateRefreshTokenAsync(request.Id, request.RefreshToken);
+            var player = await ValidateRefreshTokenAsync(request.RefreshToken);
             if (player is null)
             {
                 return null;
@@ -103,31 +103,27 @@ namespace Poker.Services
             };
         }
 
-        private async Task<Player?> ValidateRefreshTokenAsync(int id, string refreshToken)
+        private async Task<Player?> ValidateRefreshTokenAsync(string refreshToken)
         {
-            var player = await context.Players.FindAsync(id);
-            if (player is null)
-            {
-                return null;
-            }
-
             var tokens = await context.RefreshTokens
-                .Where(t => t.PlayerId == id 
-                    && t.Revoked == false
-                    && t.ExpiresAt > DateTime.UtcNow)
+                .Include(t => t.Player)
+                .Where(t => t.Revoked == false && t.ExpiresAt > DateTime.UtcNow)
                 .ToListAsync();
 
             foreach (var token in tokens)
             {
-                if (new PasswordHasher<Player>().VerifyHashedPassword(player, token.TokenHash, refreshToken)
-                    == PasswordVerificationResult.Success)
+                if (new PasswordHasher<Player>().VerifyHashedPassword(
+                        token.Player,
+                        token.TokenHash,
+                        refreshToken) == PasswordVerificationResult.Success)
                 {
-                    return player;
+                    return token.Player;
                 }
             }
 
             return null;
         }
+
         private string CreateToken(Player player)
         {
             var claims = new List<Claim>

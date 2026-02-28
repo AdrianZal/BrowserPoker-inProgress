@@ -387,6 +387,7 @@ public class Table
 
         if (playerScores.Count() >= 2)
         {
+            winningHandDescription = WhatHand(maxScore);
             foreach (var p in playersInGame)
             {
                 if (playerStatuses[p] != PlayerStatus.Folded)
@@ -405,8 +406,6 @@ public class Table
                 }
             }
         }
-
-        winningHandDescription = WhatHand(maxScore);
 
         return winningsByPlayer;
     }
@@ -447,7 +446,7 @@ public class Table
         roundBets.Clear();
         if (preflop)
         {
-            toCall = smallBlind * 2;
+            winningHandDescription = string.Empty;
             handBets.Clear();
             handWinners.Clear();
             Reindex();
@@ -462,21 +461,34 @@ public class Table
             roundBets.Add(player, 0);
             if (preflop)
             {
+                handBets.Add(player, 0);
                 if (playersInGame.Count() == 2)
                 {
                     switch (playerRoles[player])
                     {
                         case PlayerRole.Dealer:
-                            roundBets[player] = smallBlind;
-                            handBets[player] = smallBlind;
-                            player.tableBalance -= smallBlind;
-                            playerStatuses[player] = PlayerStatus.ToCall;
+                            if(player.tableBalance <= smallBlind)
+                            {
+                                HandleBet(player, player.tableBalance);
+                                playerStatuses[player] = PlayerStatus.AllIn;
+                            }
+                            else
+                            {
+                                HandleBet(player, smallBlind);
+                                playerStatuses[player] = PlayerStatus.ToCall;
+                            }
                             break;
                         case PlayerRole.BigBlind:
-                            roundBets[player] = smallBlind * 2;
-                            handBets[player] = smallBlind * 2;
-                            player.tableBalance -= smallBlind * 2;
-                            playerStatuses[player] = PlayerStatus.ToCheck;
+                            if (player.tableBalance <= smallBlind * 2)
+                            {
+                                HandleBet(player, player.tableBalance);
+                                playerStatuses[player] = PlayerStatus.AllIn;
+                            }
+                            else
+                            {
+                                HandleBet(player, smallBlind * 2);
+                                playerStatuses[player] = PlayerStatus.ToCheck;
+                            }
                             break;
                     }
                 }
@@ -485,16 +497,28 @@ public class Table
                     switch (playerRoles[player])
                     {
                         case PlayerRole.SmallBlind:
-                            roundBets[player] = smallBlind;
-                            handBets[player] = smallBlind;
-                            player.tableBalance -= smallBlind;
-                            playerStatuses[player] = PlayerStatus.ToCall;
+                            if (player.tableBalance <= smallBlind)
+                            {
+                                HandleBet(player, player.tableBalance);
+                                playerStatuses[player] = PlayerStatus.AllIn;
+                            }
+                            else
+                            {
+                                HandleBet(player, smallBlind);
+                                playerStatuses[player] = PlayerStatus.ToCall;
+                            }
                             break;
                         case PlayerRole.BigBlind:
-                            roundBets[player] = smallBlind * 2;
-                            handBets[player] = smallBlind * 2;
-                            player.tableBalance -= smallBlind * 2;
-                            playerStatuses[player] = PlayerStatus.ToCheck;
+                            if (player.tableBalance <= smallBlind * 2)
+                            {
+                                HandleBet(player, player.tableBalance);
+                                playerStatuses[player] = PlayerStatus.AllIn;
+                            }
+                            else
+                            {
+                                HandleBet(player, smallBlind * 2);
+                                playerStatuses[player] = PlayerStatus.ToCheck;
+                            }
                             break;
                         default:
                             handBets[player] = 0;
@@ -509,6 +533,7 @@ public class Table
                     playerStatuses[player] = PlayerStatus.ToCheck;
             }
         }
+        toCall = roundBets.Values.Max();
     }
 
     public async Task AddPlayer(Player player)

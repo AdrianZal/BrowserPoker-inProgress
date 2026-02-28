@@ -2,22 +2,26 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
+@inject HttpClient Http
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IJSRuntime JS
 
 <PageTitle>Home</PageTitle>
 
 @if (isCheckingAuth)
 {
-    <div class="d-flex justify-content-center align-items-center min-vh-100">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
+    <div class="loading">
+        <h1>Loading...</h1>
     </div>
 }
 else
 {
     <div class="d-flex align-items-center justify-content-center min-vh-100">
         <div class="card shadow-sm p-5 text-center" style="width: fit-content;">
-            <h1 class="mb-4 text-nowrap">Welcome to Pixel Poker</h1>
+            <h1 class="mb-4"
+                style="font-size: clamp(2rem, 5vw, 4rem);">
+                Welcome to Pixel Poker
+            </h1>
 
             <div class="d-flex justify-content-center gap-3">
                 <a href="register" class="btn btn-primary btn-lg px-4">
@@ -36,16 +40,40 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
+        var refreshToken = HttpContextAccessor.HttpContext?.Request.Cookies["refreshToken"];
 
-        if (user.Identity is { IsAuthenticated: true })
+        if (!string.IsNullOrEmpty(refreshToken))
         {
-            Navigation.NavigateTo("/menu");
+            return;
         }
-        else
+
+        isCheckingAuth = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
         {
-            isCheckingAuth = false;
+            var refreshToken = HttpContextAccessor.HttpContext?.Request.Cookies["refreshToken"];
+
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                var success = await JS.InvokeAsync<bool>("eval", $@"
+                    fetch('/api/auth/refresh-token?refreshToken={Uri.EscapeDataString(refreshToken)}', {{ method: 'POST' }})
+                        .then(r => r.ok)
+                        .catch(() => false)
+                ");
+
+                if (success)
+                {
+                    Navigation.NavigateTo("/menu", forceLoad: true);
+                }
+                else
+                {
+                    isCheckingAuth = false;
+                    StateHasChanged();
+                }
+            }
         }
     }
 }

@@ -69,14 +69,28 @@ namespace Poker.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken (RefreshTokenRequestDto request)
+        public async Task<IActionResult> RefreshToken()
         {
-            var response = await authService.RefreshTokensAsync(request);
-            
-            if(response is null)
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(refreshToken))
+                return Unauthorized();
+
+            var request = new RefreshTokenRequestDto
             {
-                return Unauthorized("Invalid refresh token");
+                RefreshToken = refreshToken
+            };
+
+            var response = await authService.RefreshTokensAsync(request);
+
+            if (response is null)
+            {
+                Response.Cookies.Delete("accessToken");
+                Response.Cookies.Delete("refreshToken");
+                return Unauthorized();
             }
+
+            await SetTokenCookie(response);
 
             return Ok();
         }
@@ -122,7 +136,7 @@ namespace Poker.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddDays(7)
             };
 

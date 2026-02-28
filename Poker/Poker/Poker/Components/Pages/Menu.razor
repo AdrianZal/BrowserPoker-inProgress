@@ -5,6 +5,8 @@
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject GameService GameService
+@inject IHttpContextAccessor HttpContextAccessor
+@inject UtilService UtilService
 
 <PageTitle>Menu</PageTitle>
 
@@ -12,6 +14,11 @@
     <div class="p-4 shadow-sm border rounded bg-light text-center" style="width: 100%; max-width: 350px;">
 
         <div class="d-grid gap-5">
+
+            <div class="balance-container">
+                <h1>Balance: @balance</h1>
+            </div>
+
             <button class="btn btn-primary fs-5 py-2" @onclick="() => HandleCreateTable(1000)">
                 CREATE TABLE
             </button>
@@ -39,7 +46,7 @@
             </div>
             
             <button class="btn btn-primary fs-5 py-2" @onclick="() => HandleGoToMySkins()">
-                My Skins
+                MY SKINS
             </button>
 
             <form method="post" action="api/auth/logout">
@@ -57,6 +64,19 @@
     private bool tableNotExist = false;
     private bool tableIsFull = false;
     private string joinCode = string.Empty;
+	private string? currentUserName;
+	private int balance = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUserName = HttpContextAccessor.HttpContext?.User?.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(currentUserName))
+        {
+            balance = await UtilService.GetBalanceAsync(currentUserName);
+        }
+    }
 
     private void HandleCreateTable(int buyIn)
     {
